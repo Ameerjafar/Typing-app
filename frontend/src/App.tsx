@@ -1,11 +1,20 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 import LandingPage from "./pages/LandingPage"
-
+import { RecoilRoot } from "recoil"
+import Result from "./component/Result"
 function App() {
 
   return (
-    <div className = 'bg-[#353839] min-h-screen'>
-      <LandingPage />
-    </div>
+    <RecoilRoot>
+        <div className = 'min-h-screen'>
+        <BrowserRouter>
+          <Routes>
+            <Route path = '/' element = { <LandingPage />} /> 
+            <Route path = '/result' element = { <Result />}></Route>
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </RecoilRoot>
   )
 }
 
