@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CursorBlinker from "../ui/CursorBlinker";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { inCorrectCharacterAtom, textAtom } from "../store/textAtom";
+import { inCorrectedAtom, textAtom } from "../store/textAtom";
 import { paragraphActive, paragraphFocus, paragraph } from "../store/paragraph";
 import CounterComponent from "./CounterComponent";
 const TypingLogic = () => {
@@ -11,7 +11,7 @@ const TypingLogic = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [focus, setFocus] = useRecoilState(paragraphFocus);
   const setIsActive = useSetRecoilState(paragraphActive);
-  const setInCorrectCharacter = useSetRecoilState(inCorrectCharacterAtom);
+  const setInCorrectCharacter = useSetRecoilState(inCorrectedAtom);
   useEffect(() => {
     const fetchParagraph = async () => {
       console.log(import.meta.env.VITE_API_PATH);
@@ -60,9 +60,6 @@ const TypingLogic = () => {
             const inCorrect = character !== para[ind];
             const i = currentIndex === ind;
             console.log(currentIndex);
-            if (inCorrect) {
-              setInCorrectCharacter((prev) => prev + 1);
-            }
             return (
               <span key={ind}>
                 {inCorrect ? (

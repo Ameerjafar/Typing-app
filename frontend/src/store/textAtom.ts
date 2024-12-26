@@ -12,7 +12,7 @@ export const correctedAtom = atom<number>({
     default: 0
 })
 
-export const inCorrectCharacterAtom = atom<number>({
-    key: "inCorrectAtom",
+export const inCorrectedAtom = atom<number>({
+    key: "inCorrectCountAtom",
     default: 0
 })
