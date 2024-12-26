@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "axios"
 import CursorBlinker from "../ui/CursorBlinker";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { textAtom, correctedAtom } from "../store/textAtom";
-import { paragraphActive } from "../store/paragraphActive";
+import { textAtom } from "../store/textAtom";
+import { paragraphActive, paragraphFocus } from "../store/paragraph";
 const TypingLogic = () => {
   const [text, setText] = useRecoilState(textAtom);
-  const setCorrectCharacters  = useSetRecoilState(correctedAtom);
   const [paragraph, setParagraph] = useState<string>("");
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [ focus, setFocus ] = useState<boolean>();
+  const [ focus, setFocus ] = useRecoilState(paragraphFocus)
   const  setIsActive  = useSetRecoilState(paragraphActive);
+  let correctCharacter = 0;
   useEffect(() => {
     const fetchParagraph = async () => {
       console.log(import.meta.env.VITE_API_PATH);
@@ -37,11 +37,12 @@ const TypingLogic = () => {
   return (
     <div tabIndex={0} onKeyDown={handleKeyDown} onFocus={() => setFocus(true)}>
       { !focus && <div className = 'absolute z-0 flex justify-center w-full h-full items-center text-white'>click here to focus on the content</div>}
+      { focus && text.length === 0 && <div className = 'absolute z-0 mt-3'><CursorBlinker /></div>}
       <div className="absolute z-0 leading-loose">
         {text.map((character, ind) => {
           const inCorrect = character !== paragraph[ind];
           const i = currentIndex === ind;
-          console.log(currentIndex); 
+          console.log(currentIndex);
           return (
             <span key={ind}>
               {inCorrect ? (
@@ -58,7 +59,7 @@ const TypingLogic = () => {
                   {character}
                 </span>
               )}
-              {i && <CursorBlinker />}
+              {i && <CursorBlinker /> }
             </span>
           );
         })}

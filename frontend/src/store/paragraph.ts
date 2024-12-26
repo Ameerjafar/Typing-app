@@ -5,3 +5,8 @@ export const paragraphActive = atom<boolean>({
     key: "isActiveAtom",
     default: false
 })
+
+export const paragraphFocus = atom<boolean>({
+    key: "paragraphFocus",
+    default: false
+})

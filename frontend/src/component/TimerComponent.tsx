@@ -1,32 +1,38 @@
-
-import { useState, useEffect  } from "react";
-import { useRecoilState } from "recoil";
-import { timeAtom } from "../store/TimeAtom";
+import { useEffect  } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { counterAtom, timeAtom } from "../store/TimeAtom";
 import { useNavigate } from "react-router-dom";
-import { paragraphActive } from "../store/paragraphActive";
+import { paragraphActive, paragraphFocus } from "../store/paragraph";
+import { textAtom } from "../store/textAtom"
 const TimerComponent = () => {
     const navigate = useNavigate();
     const [ time, setTime ] = useRecoilState(timeAtom); 
+    const setText = useSetRecoilState(textAtom);
     const times = [15, 30, 60];
-    const [counter, setCounter ] = useState(0);
+    const [ counter,  setCounter ] = useRecoilState(counterAtom)
     const [ isActive, setIsActive ] = useRecoilState(paragraphActive)
-    console.log(time)
+    const setParagraphFocus = useSetRecoilState(paragraphFocus);
+
     useEffect(() => {
-        if (isActive) return;
-
-        const timeInterval = setInterval(() => {
-            setCounter((prev) => {
-                if (prev + 1 === time) {
-                    setIsActive(false);
-                    clearInterval(timeInterval); 
-                    navigate('/result');
-                }
-                return prev + 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timeInterval); 
-    }, [ time, isActive ]);
+        // if (isActive) return;
+        console.log(isActive)
+        if (isActive) {
+            const timeInterval = setInterval(() => {
+                setCounter((prev) => {
+                    if (prev + 1 === time) {
+                        clearInterval(timeInterval); 
+                        navigate('/result')
+                        setText([])
+                    }
+                    return prev + 1;
+                });
+            }, 1000);
+            return () => clearInterval(timeInterval);
+        } 
+        else {
+            setTime(15);
+        }
+    }, [ isActive ]);
     return (
         <div className = ''>
             <div className = 'flex justify-center mr-36 space-x-10 mt-10 text-white bg-black'>
@@ -37,6 +43,9 @@ const TimerComponent = () => {
                         <button onClick = { () => {
                             setTime(time);
                             setIsActive(false);
+                            setCounter(0);
+                            setText([])
+                            setParagraphFocus(false);
                         } } key = { ind }>{ time }</button>
                             </div>
                         )
