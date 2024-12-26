@@ -1,6 +1,10 @@
 
 import { atom } from "recoil"
 
+export const paragraph = atom<string>({
+    key: "paragraph",
+    default: ""
+})
 export const paragraphActive = atom<boolean>({
     key: "isActiveAtom",
     default: false

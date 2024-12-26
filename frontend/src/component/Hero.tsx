@@ -1,19 +1,18 @@
 import TypingLogic from "./TypingLogic";
 import Reset from "../ui/Reset";
-import TimerComponent from "./TimerComponent";
-import WpmComponent from "./WpmComponent";
+import Footer from "./Footer";
 const Hero = () => {
   return (
     <div>
-      <TimerComponent />
-      <WpmComponent />
+      {/* <WpmComponent /> */}
       <div
-        className="relative mt-20 text-[#333333] text-4xl text-left line-clamp-3">
+        className="relative mt-20 text-[#333333] text-4xl text-left line-clamp-3 font-mono ">
         <TypingLogic />
       </div>
       <div className="flex justify-center mt-2">
         <Reset />
       </div>
+      <Footer></Footer>
     </div>
   );
 };

@@ -11,3 +11,8 @@ export const correctedAtom = atom<number>({
     key: "charactersCountAtom",
     default: 0
 })
+
+export const inCorrectCharacterAtom = atom<number>({
+    key: "inCorrectAtom",
+    default: 0
+})

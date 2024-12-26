@@ -1,10 +1,12 @@
+import TimerComponent from "./TimerComponent";
+
 const Header = () => {
   return (
-    <div className="">
-      <button className="text-white font-bold text-3xl">Typing-App</button>
-      <div className="flex space-x-3 justify-end  font-bold text-white">
-        <div className="">User profile</div>
-        <button className="mb-5">Ameer jafar</button>
+    <div className="flex font-mono">
+      <button className="text-white font-bold text-4xl">Typing-App</button>
+      <div className = 'flex justify-end w-full space-x-2'>
+        <p className = 'text-white mt-10'>Time -</p>
+        <div><TimerComponent /></div>
       </div>
     </div>
   );
