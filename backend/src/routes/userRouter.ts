@@ -3,7 +3,7 @@ import userInformation from '../userInformation/userInformation';
 import verifyToken from '../verifyToken';
 
 import { storingUserValue, updatingTestStarted } from '../storingUserValue';
-const userRouter = Router();
+const  userRouter = Router();
 
 
 userRouter.get('/:userId', verifyToken, userInformation, (req: Request, res: Response) => {});

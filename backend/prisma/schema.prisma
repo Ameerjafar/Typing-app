@@ -14,16 +14,17 @@ datasource db {
 }
 
 model User {
-  id              String            @id @default(uuid())
-  fullName        String
-  email           String
-  password        String
-  testStarted     Int
-  testCompleted   Int
-  sixtyRanking    Int
-  fiveteenRanking Int
-  typeInformation TypeInformation[]
-  leaderboard     LeaderBoard[]
+  id                String               @id @default(uuid())
+  fullName          String
+  email             String
+  password          String
+  testStarted       Int
+  testCompleted     Int
+  sixtyRanking      Int
+  fiveteenRanking   Int
+  typeInformation   TypeInformation[]
+  sixtyleaderboard  SixtyLeaderBoard[]
+  fivteeLeaderBoard FifteenLeaderBoard[]
 }
 
 model TypeInformation {
@@ -35,11 +36,18 @@ model TypeInformation {
   second   Int
 }
 
-model LeaderBoard {
+model SixtyLeaderBoard {
   id      String @id @default(uuid())
   userId  String
   user    User   @relation(fields: [userId], references: [id])
   wpm     String
-  sixtyRanking Int
-  fivteenRanking Int
+  ranking Int
+}
+
+model FifteenLeaderBoard {
+  id      String @id @default(uuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  wpm     String
+  ranking Int
 }
