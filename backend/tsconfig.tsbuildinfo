@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/routes/landingroute.ts","./src/routes/route.ts"],"version":"5.7.2"}
+{"root":["./src/index.ts","./src/verifytoken.ts","./src/auth/signin.ts","./src/auth/signup.ts","./src/routes/auteroute.ts","./src/routes/landingroute.ts","./src/routes/route.ts"],"version":"5.7.2"}

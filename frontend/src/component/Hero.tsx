@@ -6,7 +6,7 @@ const Hero = () => {
     <div>
       {/* <WpmComponent /> */}
       <div
-        className="relative mt-20 text-[#333333] text-4xl text-left line-clamp-3 font-mono ">
+        className="relative mt-20 text-[#333333] text-4xl text-left font-mono overflow-hidden">
         <TypingLogic />
       </div>
       <div className="flex justify-center mt-2">

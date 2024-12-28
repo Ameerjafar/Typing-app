@@ -11,6 +11,7 @@ function App() {
           <Routes>
             <Route path = '/' element = { <LandingPage />} /> 
             <Route path = '/result' element = { <Result />}></Route>
+            {/* <Route path = '/word' element = { <Word />}></Route> */}
           </Routes>
         </BrowserRouter>
       </div>

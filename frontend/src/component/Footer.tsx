@@ -4,7 +4,7 @@ import { Palette } from "lucide-react";
 const Footer = () => {
   return (
     <div>
-      <div className="mt-56">
+      <div className="mt-44">
         <div className="flex justify-between w-full text-mono text-gray-500">
           <div className="flex space-x-5 ">
             <div className="flex space-x-2">
