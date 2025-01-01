@@ -2,7 +2,7 @@
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { counterAtom, timeAtom } from "../store/TimeAtom";
 import { paragraphActive, paragraphFocus } from "../store/paragraph";
-import { inCorrectedAtom, textAtom } from "../store/textAtom"
+import { textAtom } from "../store/textAtom"
 const TimerComponent = () => {
     const [ time, setTime ] = useRecoilState(timeAtom); 
     const setText = useSetRecoilState(textAtom);
@@ -10,7 +10,7 @@ const TimerComponent = () => {
     const setCounter = useSetRecoilState(counterAtom);
     const times = [15, 30, 60];
     const setParagraphFocus = useSetRecoilState(paragraphFocus);
-    const setInCorrectedCharacter = useSetRecoilState(inCorrectedAtom);
+    // const setInCorrectedCharacter = useSetRecoilState(inCorrectedAtom);
     console.log("Time", time);
     return (
         <div className = ''>
@@ -18,14 +18,14 @@ const TimerComponent = () => {
             {
                         times.map((t, ind) => {
                         return (
-                            <div className = ''>
+                            <div className = '' key = { ind }>
                         <button className = {`${time === t ?"text-blue-500":"text-white"} hover:text-gray-400`} onClick = { () => {
                             setTime(t);
                             setIsActive(false);
                             setCounter(0);
                             setText([])
                             setParagraphFocus(false);
-                            setInCorrectedCharacter(0);
+                            // setInCorrectedCharacter(0);
                         } } key = { ind }>{ t }</button>
                             </div>
                         )

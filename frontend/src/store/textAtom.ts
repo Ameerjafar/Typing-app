@@ -7,12 +7,7 @@ export const textAtom = atom<string[]>({
 })
 
 
-export const correctedAtom = atom<number>({
-    key: "charactersCountAtom",
-    default: 0
-})
-
-export const inCorrectedAtom = atom<number>({
-    key: "inCorrectCountAtom",
+export const currentWordIndex = atom<number>({
+    key: "currentWordIndex",
     default: 0
 })

@@ -6,11 +6,6 @@ export default {
   ],
   theme: {
     extend: {
-      fontFamily: {
-
-        customFont: ['"Arial", sans-serif'] 
-
-      }
     },
   },
   plugins: [

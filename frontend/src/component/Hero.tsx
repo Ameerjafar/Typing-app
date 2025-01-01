@@ -1,4 +1,4 @@
-import TypingLogic from "./TypingLogic";
+import Test from "./Test";
 import Reset from "../ui/Reset";
 import Footer from "./Footer";
 const Hero = () => {
@@ -6,8 +6,8 @@ const Hero = () => {
     <div>
       {/* <WpmComponent /> */}
       <div
-        className="relative mt-20 text-[#333333] text-4xl text-left font-mono overflow-hidden">
-        <TypingLogic />
+        className="relative mt-20 text-[#333333] text-4xl text-left font-mono overflow-hidden ">
+        <Test />
       </div>
       <div className="flex justify-center mt-2">
         <Reset />
