@@ -1,9 +1,10 @@
 
 import { atom } from "recoil"
+import { randomWord } from "../component/wordList"
 
-export const paragraph = atom<string>({
+export const paragraph = atom<string[]>({
     key: "paragraph",
-    default: ""
+    default: randomWord
 })
 export const paragraphActive = atom<boolean>({
     key: "isActiveAtom",
@@ -13,4 +14,9 @@ export const paragraphActive = atom<boolean>({
 export const paragraphFocus = atom<boolean>({
     key: "paragraphFocus",
     default: false
+})
+
+export const inCorrect = atom<number>({
+    key: "inCorrecCharacterCount",
+    default: 0
 })

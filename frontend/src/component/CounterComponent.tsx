@@ -32,7 +32,7 @@ const CounterComponent = () => {
         }
     }, [ isActive ]);
     return (
-        <div className = 'text-blue-500 font-mono '>
+        <div className = 'text-blue-500 font-mono mb-10'>
             { counter }
         </div>
     )

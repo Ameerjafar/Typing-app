@@ -5,25 +5,30 @@ import { timeAtom } from "../store/TimeAtom";
 import { paragraph } from "../store/paragraph";
 const WpmComponent = () => {
   const text = useRecoilValue(textAtom);
-  const para = useRecoilValue(paragraph);
+  const words = useRecoilValue(paragraph);
   const time = useRecoilValue(timeAtom);
   const [wpm, setWpm] = useState<string>("0");
+  const [ correctedCharacters, setCorrectedCharacter ] = useState<number>(0);
   const [ accuracy, setAccuracy ] = useState<string>("0");
-  let correctCharacters = 0;
   useEffect(() => {
-    for(let i = 0; i < text.length; i++) {
-      if(text[i] === para[i]) {
-        correctCharacters++;
-      }
-    }
+      const characters = words
+        .map((word) => {
+          return [...word.split(""), " "];
+        })
+        .flat();
+      const correctCount = text.reduce((count, char, index) => {
+        return char === characters[index] ? count + 1 : count;
+    }, 0);
+    setCorrectedCharacter(correctCount);
+    console.log(correctedCharacters);
     const min = time / 60;
     console.log("this is the total character", text.length);
-    console.log("this is the corrected characters", correctCharacters);
-    console.log(((correctCharacters - text.length) / text.length) * 100);
-    const word = Math.round((correctCharacters / 5) / min).toFixed(2);
-    setAccuracy(Math.abs(((correctCharacters - text.length)/ text.length)  * 100).toFixed(2))
+    console.log("this is the corrected characters", correctedCharacters);
+    console.log(((correctedCharacters - text.length) / text.length) * 100);
+    const word = Math.round((correctedCharacters / 5) / min).toFixed(2);
+    setAccuracy(((correctedCharacters / text.length) * 100).toFixed(2));
     setWpm(word);
-  }, []);
+  }, [correctedCharacters ]);
   return (
     <div className = 'font-mono text-3xl text-[#333333]'>
       <div>{ wpm } wpm</div>
