@@ -24,7 +24,9 @@ const Test = () => {
     if (key === " ") {
       setText((prev) => [...prev, " "]);
       setCurrentIndex((prev) => prev + 1);
-      setCurrentWordIndex((prev) => prev + 1);
+      if(wordCharacter![currentIndex] === " ") {
+        setCurrentWordIndex((prev) => prev + 1);
+      }
     } else if (/^[a-zA-Z.,]$/.test(key)) {
       setText((prev) => [...prev, key]);
       setCurrentIndex((prev) => prev + 1);
@@ -37,6 +39,13 @@ const Test = () => {
 
     }
   };
+  useEffect(() => {
+    if(wordRef[currentWordInd].current!.offsetLeft > wordRef[currentWordInd + 1].current!.offsetLeft) {
+        wordRef[currentWordInd].current?.scrollIntoView({
+          behavior: "smooth",
+        });
+    }
+  }, [ currentWordInd ])
   // useEffect(() => {
   //   if (text.length !== 0) {
   //     console.log("this is the word length", words[currentWordInd - 1].length);
@@ -104,7 +113,7 @@ const Test = () => {
         </div>
         <div
           onKeyDown={keyHandler}
-          className="leading-loose text-left h-52 tracking-wide"
+          className="leading-loose text-left h-52 tracking-wide outline-none"
           tabIndex={0}
           onBlur={() => setFocus(false)}
           onFocus={() => {
