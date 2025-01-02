@@ -2,8 +2,7 @@ import axios from "axios";
 import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { z } from 'zod'
-import jwt from 'jsonwebtoken';
+import { set, z } from 'zod'
 const zodScheme = z.object({
     email: z.string().email(),
     password: z.string().min(6)
@@ -21,14 +20,13 @@ const SignIn = () => {
             password
         })
         if(clientSideChecking) {
-            const response = await axios.post(`${import.meta.env.VITE_API_PATH}/auth/signin`, {
+            const response =  await axios.post(`${import.meta.env.VITE_API_PATH}/auth/signin`, {
                 email,
                 password
             })
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("userId", response.data.userId);
             navigate('/');
-            const token = response.data.token
-            const object = jwt.decode(token)
-            console.log(object)
         }
         else {
             console.log("Your are not met the from constraits");
@@ -48,7 +46,7 @@ const SignIn = () => {
             <input onChange = { (e) => setEmail(e.target.value) } placeholder="Email" className = 'bg-[#121212] border-2 rounded-md p-2 w-72'></input>
           </div>
           <div>
-            <input onChange = { (e) => setPassword(e.target.value)} placeholder="password" className = 'bg-[#121212] border-2 rounded-md p-2 w-72'></input>
+            <input type="password" onChange = { (e) => setPassword(e.target.value)} placeholder="password" className = 'bg-[#121212] border-2 rounded-md p-2 w-72'></input>
           </div>
           <button onClick = { sumbitHandler } className = 'w-full bg-black/50 text-center h-10'>Sign In</button>
         </div>

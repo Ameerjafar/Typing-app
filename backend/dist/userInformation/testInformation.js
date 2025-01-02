@@ -14,7 +14,7 @@ const userInformation = (req, res) => __awaiter(void 0, void 0, void 0, function
     const prisma = new client_1.PrismaClient();
     try {
         const { userId } = req.params;
-        const userInformation = yield prisma.user.findFirst({
+        const userInformation = yield prisma.typeInformation.findMany({
             where: {
                 id: userId
             }

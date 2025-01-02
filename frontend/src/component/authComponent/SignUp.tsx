@@ -41,7 +41,7 @@ const SignUp = () => {
             <input onChange = { (e) => setEmail(e.target.value) } placeholder="Email" className = 'bg-[#121212] border-2 rounded-md p-2 w-72'></input>
           </div>
           <div>
-            <input onChange = { (e) => setPassword(e.target.value)} placeholder="password" className = 'bg-[#121212] border-2 rounded-md p-2 w-72'></input>
+            <input type="password" onChange = { (e) => setPassword(e.target.value)} placeholder="password" className = 'bg-[#121212] border-2 rounded-md p-2 w-72'></input>
           </div>
           <button onClick = { sumbitHandler } className = 'w-full bg-black/50 text-center h-10'>Sign Up</button>
         </div>

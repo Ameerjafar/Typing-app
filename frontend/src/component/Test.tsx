@@ -25,6 +25,7 @@ const Test = () => {
     setParagraphActive(true);
     const { key } = event;
     if (key === " ") {
+      event.preventDefault();
       setText((prev) => [...prev, " "]);
       setCurrentIndex((prev) => prev + 1);
       if (wordCharacter![currentIndex] === " ") {
@@ -94,7 +95,8 @@ const Test = () => {
               const i = currentIndex - 1 === ind;
               const correctCharacter = character === wordCharacter![ind];
               return (
-                <span key={ind}>
+                <span key={ind}
+                >
                   {correctCharacter ? (
                     <span className="text-white" key={ind}>
                       {character}

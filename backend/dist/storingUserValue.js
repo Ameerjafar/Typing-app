@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.showUserRanking = exports.updatingTestStarted = exports.storingUserValue = void 0;
+exports.showUserRanking = exports.updatingTestStarted = exports.storingUserValue = exports.updatingTestCompleted = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const leaderBoard = (wpm, userId, table) => __awaiter(void 0, void 0, void 0, function* () {
@@ -140,6 +140,24 @@ const updatingTestStarted = (req, res) => __awaiter(void 0, void 0, void 0, func
     });
 });
 exports.updatingTestStarted = updatingTestStarted;
+const updatingTestCompleted = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const prisma = new client_1.PrismaClient();
+    const { userId } = req.params;
+    yield prisma.user.update({
+        where: {
+            id: userId,
+        },
+        data: {
+            testStarted: {
+                increment: 1,
+            },
+            testCompleted: {
+                increment: 1
+            }
+        },
+    });
+});
+exports.updatingTestCompleted = updatingTestCompleted;
 const showUserRanking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId } = req.params;
     try {

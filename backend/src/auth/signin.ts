@@ -18,8 +18,10 @@ const signin = async (req: Request, res: Response) => {
     console.log(hashedPassword)
     if(hashedPassword) {
         try {
+            console.log(existingUser?.id);
             const token = jwt.sign({email: existingUser?.email, userId: existingUser!.id}, process.env.JWT_SECRET!, {expiresIn: "1h"})
-            res.status(200).json({token: token});
+            
+            res.status(200).json({token: token, userId: existingUser!.id});
         }catch(error) {
             res.status(200).json(error)
         }

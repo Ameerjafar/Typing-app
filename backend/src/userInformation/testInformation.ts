@@ -4,7 +4,7 @@ const userInformation = async (req: Request, res: Response) => {
     const prisma = new PrismaClient();
     try {
         const { userId } = req.params;
-        const userInformation = await prisma.user.findFirst({
+        const userInformation = await prisma.typeInformation.findMany({
             where: {
                 id: userId
             }
