@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 const leaderBoard = async (wpm: string, userId: string, table: string) => {
   try {
     if (table === "sixtyLeaderBoard") {
+      await prisma.sixtyLeaderBoard.deleteMany({where: {userId}});
       const leaderboard = await prisma.sixtyLeaderBoard.findMany({
         orderBy: {
           ranking: "asc",
@@ -21,11 +22,6 @@ const leaderBoard = async (wpm: string, userId: string, table: string) => {
         });
       }
       for (let i = 0; i < leaderboard.length; i++) {
-        if (leaderboard[i].userId === userId) {
-          await prisma.sixtyLeaderBoard.delete({
-            where: { id: leaderboard[i].id },
-          });
-        }
         const wordsPerMinute = leaderboard[i].wpm;
         if (wordsPerMinute < wpm) {
           for (let j = i; j < leaderboard.length; j++) {
@@ -48,6 +44,7 @@ const leaderBoard = async (wpm: string, userId: string, table: string) => {
         }
       }
     } else {
+      await prisma.sixtyLeaderBoard.deleteMany({where: {userId}});
       const leaderboard = await prisma.fifteenLeaderBoard.findMany({
         orderBy: {
           ranking: "asc",
@@ -64,11 +61,6 @@ const leaderBoard = async (wpm: string, userId: string, table: string) => {
         });
       }
       for (let i = 0; i < leaderboard.length; i++) {
-        if (leaderboard[i].userId === userId) {
-          await prisma.fifteenLeaderBoard.delete({
-            where: { id: leaderboard[i].id },
-          });
-        }
         const wordsPerMinute = leaderboard[i].wpm;
         if (wordsPerMinute < wpm) {
           for (let j = i; j < leaderboard.length; j++) {
@@ -130,6 +122,23 @@ const updatingTestStarted = async (req: Request, res: Response) => {
       testStarted: {
         increment: 1,
       },
+    },
+  });
+};
+export const updatingTestCompleted = async (req: Request, res: Response) => {
+  const prisma = new PrismaClient();
+  const { userId } = req.params;
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      testStarted: {
+        increment: 1,
+      },
+      testCompleted: {
+        increment: 1
+      }
     },
   });
 };

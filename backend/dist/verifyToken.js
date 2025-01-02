@@ -17,15 +17,15 @@ const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     var _a;
     const token = (_a = req.headers['authorization']) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
     if (!token) {
-        return res.status(401).send('Unauthorized: No token provided');
+        res.status(401).send('Unauthorized: No token provided');
     }
     jsonwebtoken_1.default.verify(token, 'your-secret-key', (err, decoded) => {
         if (err) {
             if (err.name === 'TokenExpiredError') {
-                return res.status(401).send('Unauthorized: Token expired');
+                res.status(401).send('Unauthorized: Token expired');
             }
             else {
-                return res.status(401).send('Unauthorized: Invalid token');
+                res.status(401).send('Unauthorized: Invalid token');
             }
         }
         next();

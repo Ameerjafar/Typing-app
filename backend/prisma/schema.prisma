@@ -20,8 +20,6 @@ model User {
   password          String
   testStarted       Int
   testCompleted     Int
-  sixtyRanking      Int
-  fiveteenRanking   Int
   typeInformation   TypeInformation[]
   sixtyleaderboard  SixtyLeaderBoard[]
   fivteeLeaderBoard FifteenLeaderBoard[]

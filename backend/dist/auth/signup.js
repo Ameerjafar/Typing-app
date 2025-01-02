@@ -32,7 +32,9 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             data: {
                 fullName,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                testCompleted: 0,
+                testStarted: 0
             }
         });
         res.status(200).json({ message: "User created successfully in the db"

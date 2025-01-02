@@ -10,10 +10,10 @@ const Test = () => {
   const [text, setText] = useRecoilState(textAtom);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [wordCharacter, setWordCharacter] = useState<string[]>();
-  const [currentWordInd, setCurrentWordIndex] =
-    useRecoilState<number>(currentWordIndex);
+  const [currentWordInd, setCurrentWordIndex] = useRecoilState<number>(currentWordIndex);
   const setParagraphActive = useSetRecoilState(paragraphActive);
   const setIsCorrectCharacter = useSetRecoilState(inCorrect);
+  const [textAccuracy, setTextAccuracy] = useState<boolean[]>([]);
   const emptySpans = () => {
     return Array(words.length)
       .fill(0)

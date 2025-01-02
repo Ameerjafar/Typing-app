@@ -30,7 +30,7 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(hashedPassword);
     if (hashedPassword) {
         try {
-            const token = jsonwebtoken_1.default.sign({ email: existingUser === null || existingUser === void 0 ? void 0 : existingUser.email, id: existingUser.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+            const token = jsonwebtoken_1.default.sign({ email: existingUser === null || existingUser === void 0 ? void 0 : existingUser.email, userId: existingUser.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
             res.status(200).json({ token: token });
         }
         catch (error) {
