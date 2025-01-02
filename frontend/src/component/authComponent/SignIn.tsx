@@ -2,7 +2,7 @@ import axios from "axios";
 import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { set, z } from 'zod'
+import { z } from 'zod'
 const zodScheme = z.object({
     email: z.string().email(),
     password: z.string().min(6)

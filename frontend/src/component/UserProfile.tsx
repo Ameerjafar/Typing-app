@@ -16,7 +16,6 @@ interface UserObject {
 }
 const UserProfile = () => {
   const [user, setUser] = useState<UserObject>();
-  const [ typeInformation, setTypeInformation ] = useState();
   const [ average, setAverage ] = useState<number[]>([]);
   useEffect(() => {
     const fetchUser = async () => {
@@ -31,7 +30,7 @@ const UserProfile = () => {
         }
       );
       setUser(response.data.userInformation);
-      const response = await axios.get(
+      const response1 = await axios.get(
         `${import.meta.env.VITE_API_PATH}/average/${userId}`,
         {
           headers: {
@@ -39,9 +38,9 @@ const UserProfile = () => {
           },
         }
       );
-      setAverage(prev => [...prev, response.data.avgFivteen]);
-      setAverage(prev => [...prev, response.data.avgsixty]);
-      setAverage(prev => [...prev, response.data.avgthirty]);
+      setAverage(prev => [...prev, response1.data.avgFivteen]);
+      setAverage(prev => [...prev, response1.data.avgsixty]);
+      setAverage(prev => [...prev, response1.data.avgthirty]);
 
     };
     fetchUser();
@@ -61,17 +60,17 @@ const UserProfile = () => {
           <div className="flex space-x-7 ml-3">
             <Card
               second={15}
-              wpm={"100"}
+              wpm={`${average[0] || 0 }`}
               icon={<Trophy className="text-yellow-400" />}
             ></Card>
             <Card
               second={30}
-              wpm={"100"}
+              wpm={`${average[1] || 0}`}
               icon={<Trophy className="text-yellow-400" />}
             ></Card>
             <Card
               second={60}
-              wpm={"100"}
+              wpm={`${average[2] || 0}`}
               icon={<Trophy className="text-yellow-400" />}
             ></Card>
           </div>
