@@ -6,17 +6,18 @@ import AuthComponent from "./component/authComponent/AuthComponent"
 import toast from "react-hot-toast"
 import UserProfile from "./component/UserProfile"
 function App() {
-
+  localStorage.setItem("isLogin", "false");
+  const [ isLogin, setIsLogin ] = localStorage.getItem("isLogin");
   return (
     <RecoilRoot>
       <div className = 'min-h-screen'>
         <BrowserRouter>
-          <Routes>
+          <Routes>  
             <Route path = '/' element = { <LandingPage />} /> 
             <Route path = '/result' element = { <Result />}></Route>
             {/* <Route path = '/word' element = { <Word />}></Route> */}
             <Route path = '/login' element = { <AuthComponent />}></Route>
-            <Route path = '/profile' element = { <UserProfile />}></Route>
+            {isLogin && <Route path = '/profile' element = { <UserProfile />}></Route>}
           </Routes>
         </BrowserRouter>
       </div>

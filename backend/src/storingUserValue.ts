@@ -89,7 +89,7 @@ const storingUserValue = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { wpm, accuracy, second } = req.body;
-    await prisma.typeInformation.create({
+    const info = await prisma.typeInformation.create({
       data: {
         userId,
         wpm,
@@ -106,7 +106,7 @@ const storingUserValue = async (req: Request, res: Response) => {
       }
     }
 
-    res.status(200).json({ message: "Data stored successfully" });
+    res.status(200).json({ message: info });
   } catch (error) {
     res.status(403).json(error);
   }

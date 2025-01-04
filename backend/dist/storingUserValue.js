@@ -101,7 +101,7 @@ const storingUserValue = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const { userId } = req.params;
         const { wpm, accuracy, second } = req.body;
-        yield prisma.typeInformation.create({
+        const info = yield prisma.typeInformation.create({
             data: {
                 userId,
                 wpm,
@@ -118,7 +118,7 @@ const storingUserValue = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 leaderBoard(wpm, user.id, "fifteenLeaderBoard");
             }
         }
-        res.status(200).json({ message: "Data stored successfully" });
+        res.status(200).json({ message: info });
     }
     catch (error) {
         res.status(403).json(error);

@@ -23,9 +23,11 @@ const RankingCard = ({ second, ranking, BestUserScore, icon1, icon2 }: RankingCa
                 <div className = 'text-bold text-2xl mt-2'>
                     { icon2 }
                 </div>
-                <div className = 'text-white text-3xl mt-1'>
-                    #{ ranking }
-                </div>
+                {
+                <div className='text-white text-3xl mt-1'>
+                {ranking !== undefined ? `#${ranking}` : '-'}
+              </div>
+                }
             </div>
             <hr className = 'w-full text-gray-2 my-6'></hr>
             <div className = 'text-2xl mt-2 mb-3'>Your Best Typed</div>

@@ -30,9 +30,9 @@ const average = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         else
             testfivteenCount.push(response[i].wpm);
     }
-    const avgFivteen = testfivteenCount.reduce((sum, current) => sum + parseInt(current, 10), 0);
-    const avgsixty = testfivteenCount.reduce((sum, current) => sum + parseInt(current, 10), 0);
-    const avgthirty = testfivteenCount.reduce((sum, current) => sum + parseInt(current, 10), 0);
+    const avgFivteen = (testfivteenCount.reduce((sum, current) => sum + parseInt(current, 10), 0) / testfivteenCount.length).toFixed(0);
+    const avgsixty = (testSixtyCount.reduce((sum, current) => sum + parseInt(current, 10), 0) / testSixtyCount.length).toFixed(0);
+    const avgthirty = (testThirtyCount.reduce((sum, current) => sum + parseInt(current, 10), 0) / testThirtyCount.length).toFixed(0);
     res.status(200).json({
         avgFivteen,
         avgsixty,

@@ -17,18 +17,18 @@ const average = async (req: Request, res: Response) => {
     else if (response[i].second === 30) testThirtyCount.push(response[i].wpm);
     else testfivteenCount.push(response[i].wpm);
   }
-  const avgFivteen = testfivteenCount.reduce(
+  const avgFivteen = (testfivteenCount.reduce(
     (sum, current) => sum + parseInt(current, 10),
     0
-  );
-  const avgsixty = testfivteenCount.reduce(
+  ) / testfivteenCount.length).toFixed(0);
+  const avgsixty = (testSixtyCount.reduce(
     (sum, current) => sum + parseInt(current, 10),
     0
-  );
-  const avgthirty = testfivteenCount.reduce(
+  ) / testSixtyCount.length).toFixed(0);
+  const avgthirty = (testThirtyCount.reduce(
     (sum, current) => sum + parseInt(current, 10),
     0
-  );
+  ) / testThirtyCount.length).toFixed(0);
   res.status(200).json({
     avgFivteen,
     avgsixty,
