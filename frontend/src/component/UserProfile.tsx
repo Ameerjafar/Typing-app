@@ -7,6 +7,8 @@ import { Trophy, Clock, Target, Medal } from "lucide-react";
 import RankingCard from "../ui/RankingCard";
 import { timeAtom } from "../store/TimeAtom";
 import { useRecoilValue } from "recoil";
+
+
 interface UserObject {
   id: string;
   fullName: string;

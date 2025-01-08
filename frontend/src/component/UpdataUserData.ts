@@ -29,20 +29,3 @@ export const updateTestStarted = async () => {
   );
   console.log("update test started function finished successfully");
 };
-
-export const updateTestInformation = async (wpm: string, second: number, accuracy: string) => {
-  const response = await axios.post(
-    `${import.meta.env.VITE_API_PATH}/user/addData/${userId}`,
-    {
-      wpm,
-      second,
-      accuracy,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  console.log(response.data);
-};

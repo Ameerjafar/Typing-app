@@ -39,24 +39,24 @@ const WpmComponent = ({
     console.log(acc);
     setWpm(word);
     setAccuracy(acc);
-    // const fetchData = async () => {
-    //   const response = await axios.post(
-    //     `${import.meta.env.VITE_API_PATH}/user/addData/${userId}`,
-    //     {
-    //       wpm: word,
-    //       second: time,
-    //       accuracy: acc,
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     }
-    //   );
-    //   console.log(response.data);
-    // };
-    // fetchData();
-    // callRef.current = true;
+    const fetchData = async () => {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_PATH}/user/addData/${userId}`,
+        {
+          wpm: word,
+          second: time,
+          accuracy: acc,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+    };
+    fetchData();
+    callRef.current = true;
   }, [wpm]);
   return (
     <div className="font-mono text-3xl text-[#333333]">

@@ -7,7 +7,7 @@ const Hero = () => {
     <div className = 'relative'>
       <div className = 'text-4xl mt-10'><CounterComponent /></div>
       <div
-        className="relative text-[#333333] text-xl md:text-4xl font-mono overflow-hidden ">
+        className="relative text-[#333333] text-xl md:text-4xl font-mono overflow-hidden">
         <Test />
       </div>
       <div className="flex justify-center mt-2">
