@@ -43,14 +43,16 @@ const UserProfile = () => {
           },
         }
       );
-      // console.log(response1.data)
       const avg = response1.data;
       console.log(avg);
       setAverage([avg.avgFivteen, avg.avgthirty, avg.avgSixty]);
       console.log("this is the average state variable", average)
 
-      const response2 = await axios.post(`${import.meta.env.VITE_API_PATH}/leaderboard/${userId}`)
-      setRanking([response2.data.fivteen, response2.data.sixty])
+      const response2 = await axios.get(`${import.meta.env.VITE_API_PATH}/leaderboard/${userId}`)
+      const ranking = response2.data;
+      console.log("this is the ranking", ranking)
+      setRanking([ranking.fivteen, ranking.sixty])
+      console.log(ranking);
     };
     fetchUser();
   }, []);
@@ -98,14 +100,14 @@ const UserProfile = () => {
           <div className="flex space-x-7">
             <RankingCard
               second={15}
-              ranking={`${!isNaN(ranking[0]) ? ranking[0] : "0"}`}
+              ranking={`${ranking[0] !== null ? ranking[0] : "0"}`}
               BestUserScore="100"
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
             ></RankingCard>
             <RankingCard
               second={60}
-              ranking={`${!isNaN(ranking[1]) ? ranking[1] : "0"}`}
+              ranking={`${ranking[1] !== null ? ranking[1] : "0"}`}
               BestUserScore="100"
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
