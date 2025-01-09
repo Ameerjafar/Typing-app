@@ -15,7 +15,23 @@ const prisma = new client_1.PrismaClient();
 const leaderBoard = (wpm, userId, table) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (table === "sixtyLeaderBoard") {
-            yield prisma.sixtyLeaderBoard.deleteMany({ where: { userId } });
+            const userSixtyRanking = yield prisma.sixtyLeaderBoard.findMany({
+                where: {
+                    userId
+                }
+            });
+            if (userSixtyRanking) {
+                if (userSixtyRanking[0].wpm < wpm) {
+                    return;
+                }
+                else {
+                    yield prisma.sixtyLeaderBoard.deleteMany({
+                        where: {
+                            userId
+                        }
+                    });
+                }
+            }
             const leaderboard = yield prisma.sixtyLeaderBoard.findMany({
                 orderBy: {
                     ranking: "asc",
@@ -31,37 +47,66 @@ const leaderBoard = (wpm, userId, table) => __awaiter(void 0, void 0, void 0, fu
                     },
                 });
             }
-            for (let i = 0; i < leaderboard.length; i++) {
+            let pointer = 0;
+            for (let i = pointer; i < leaderboard.length; i++) {
                 const wordsPerMinute = leaderboard[i].wpm;
                 if (wordsPerMinute < wpm) {
-                    for (let j = i; j < leaderboard.length; j++) {
-                        yield prisma.sixtyLeaderBoard.update({
-                            where: {
-                                id: leaderboard[j].id,
-                            },
-                            data: {
-                                ranking: {
-                                    increment: 1,
-                                },
-                            },
-                        });
-                        findWpm = true;
-                        break;
-                    }
-                    if (findWpm) {
-                        break;
-                    }
+                    yield prisma.sixtyLeaderBoard.create({
+                        data: {
+                            wpm,
+                            ranking: leaderboard[i].ranking,
+                            userId
+                        }
+                    });
+                    break;
                 }
+                pointer++;
+            }
+            if (pointer === leaderboard.length) {
+                yield prisma.sixtyLeaderBoard.create({
+                    data: {
+                        userId,
+                        ranking: (yield prisma.sixtyLeaderBoard.count()) + 1,
+                        wpm
+                    }
+                });
+            }
+            for (let j = pointer; j < leaderboard.length; j++) {
+                yield prisma.sixtyLeaderBoard.update({
+                    where: {
+                        id: leaderboard[j].id,
+                    },
+                    data: {
+                        ranking: {
+                            increment: 1,
+                        },
+                    },
+                });
             }
         }
         else {
-            yield prisma.sixtyLeaderBoard.deleteMany({ where: { userId } });
+            const userSixtyRanking = yield prisma.fifteenLeaderBoard.findMany({
+                where: {
+                    userId
+                }
+            });
+            if (userSixtyRanking) {
+                if (userSixtyRanking[0].wpm < wpm) {
+                    return;
+                }
+                else {
+                    yield prisma.fifteenLeaderBoard.deleteMany({
+                        where: {
+                            userId
+                        }
+                    });
+                }
+            }
             const leaderboard = yield prisma.fifteenLeaderBoard.findMany({
                 orderBy: {
                     ranking: "asc",
                 },
             });
-            let findWpm = false;
             if (leaderboard.length === 0) {
                 yield prisma.fifteenLeaderBoard.create({
                     data: {
@@ -71,27 +116,41 @@ const leaderBoard = (wpm, userId, table) => __awaiter(void 0, void 0, void 0, fu
                     },
                 });
             }
-            for (let i = 0; i < leaderboard.length; i++) {
+            let pointer = 0;
+            for (let i = pointer; i < leaderboard.length; i++) {
                 const wordsPerMinute = leaderboard[i].wpm;
                 if (wordsPerMinute < wpm) {
-                    for (let j = i; j < leaderboard.length; j++) {
-                        yield prisma.fifteenLeaderBoard.update({
-                            where: {
-                                id: leaderboard[j].id,
-                            },
-                            data: {
-                                ranking: {
-                                    increment: 1,
-                                },
-                            },
-                        });
-                        findWpm = true;
-                        break;
-                    }
-                    if (findWpm) {
-                        break;
-                    }
+                    yield prisma.fifteenLeaderBoard.create({
+                        data: {
+                            wpm,
+                            ranking: leaderboard[i].ranking,
+                            userId
+                        }
+                    });
+                    break;
                 }
+                pointer++;
+            }
+            if (pointer === leaderboard.length) {
+                yield prisma.fifteenLeaderBoard.create({
+                    data: {
+                        userId,
+                        ranking: (yield prisma.fifteenLeaderBoard.count()) + 1,
+                        wpm
+                    }
+                });
+            }
+            for (let j = pointer; j < leaderboard.length; j++) {
+                yield prisma.fifteenLeaderBoard.update({
+                    where: {
+                        id: leaderboard[j].id,
+                    },
+                    data: {
+                        ranking: {
+                            increment: 1,
+                        },
+                    },
+                });
             }
         }
     }
