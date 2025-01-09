@@ -1,6 +1,6 @@
 interface RankingCardProps {
     second: number,
-    ranking: number,
+    ranking: string,
     BestUserScore: string,
     icon1: React.ReactNode,
     icon2: React.ReactNode
@@ -25,7 +25,7 @@ const RankingCard = ({ second, ranking, BestUserScore, icon1, icon2 }: RankingCa
                 </div>
                 {
                 <div className='text-white text-3xl mt-1'>
-                {ranking !== undefined ? `#${ranking}` : '-'}
+                {ranking !== "0" ? `#${ranking}` : '-'}
               </div>
                 }
             </div>

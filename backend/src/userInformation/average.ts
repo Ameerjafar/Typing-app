@@ -21,7 +21,7 @@ const average = async (req: Request, res: Response) => {
     (sum, current) => sum + parseInt(current, 10),
     0
   ) / testfivteenCount.length).toFixed(0);
-  const avgsixty = (testSixtyCount.reduce(
+  const avgSixty = (testSixtyCount.reduce(
     (sum, current) => sum + parseInt(current, 10),
     0
   ) / testSixtyCount.length).toFixed(0);
@@ -31,8 +31,8 @@ const average = async (req: Request, res: Response) => {
   ) / testThirtyCount.length).toFixed(0);
   res.status(200).json({
     avgFivteen,
-    avgsixty,
-    avgthirty, 
+    avgthirty,
+    avgSixty, 
   });
 };
 

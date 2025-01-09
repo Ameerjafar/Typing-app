@@ -1,11 +1,30 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { loadEnvFile } from "process";
 
 const prisma = new PrismaClient();
 const leaderBoard = async (wpm: string, userId: string, table: string) => {
   try {
     if (table === "sixtyLeaderBoard") {
-      await prisma.sixtyLeaderBoard.deleteMany({where: {userId}});
+      const userSixtyRanking = await prisma.sixtyLeaderBoard.findMany({
+        where: {
+          userId
+        }
+      })
+      if(userSixtyRanking) {
+        if(userSixtyRanking[0].wpm < wpm) {
+        return;
+        }
+        else {
+          await prisma.sixtyLeaderBoard.deleteMany({
+            where: {
+              userId
+            }
+          })
+        }
+      }
+
+
       const leaderboard = await prisma.sixtyLeaderBoard.findMany({
         orderBy: {
           ranking: "asc",
@@ -21,36 +40,65 @@ const leaderBoard = async (wpm: string, userId: string, table: string) => {
           },
         });
       }
-      for (let i = 0; i < leaderboard.length; i++) {
+      let pointer = 0;
+      for (let i = pointer; i < leaderboard.length; i++) {
         const wordsPerMinute = leaderboard[i].wpm;
         if (wordsPerMinute < wpm) {
-          for (let j = i; j < leaderboard.length; j++) {
-            await prisma.sixtyLeaderBoard.update({
-              where: {
-                id: leaderboard[j].id,
-              },
-              data: {
-                ranking: {
-                  increment: 1,
-                },
-              },
-            });
-            findWpm = true;
-            break;
-          }
-          if (findWpm) {
-            break;
-          }
+          await prisma.sixtyLeaderBoard.create({
+            data: {
+              wpm,
+              ranking: leaderboard[i].ranking,
+              userId
+            }
+          })
+          break;
         }
+        pointer++;
+      }
+      if(pointer === leaderboard.length) {
+        await prisma.sixtyLeaderBoard.create({
+          data: {
+            userId,
+            ranking: await prisma.sixtyLeaderBoard.count() + 1,
+            wpm
+          }
+        })
+      }
+      for (let j = pointer; j < leaderboard.length; j++) {
+        await prisma.sixtyLeaderBoard.update({
+          where: {
+            id: leaderboard[j].id,
+          },
+          data: {
+            ranking: {
+              increment: 1,
+            },
+          },
+        });
       }
     } else {
-      await prisma.sixtyLeaderBoard.deleteMany({where: {userId}});
+      const userSixtyRanking = await prisma.fifteenLeaderBoard.findMany({
+        where: {
+          userId
+        }
+      })
+      if(userSixtyRanking) {
+        if(userSixtyRanking[0].wpm < wpm) {
+        return;
+        }
+        else {
+          await prisma.fifteenLeaderBoard.deleteMany({
+            where: {
+              userId
+            }
+          })
+        }
+      }
       const leaderboard = await prisma.fifteenLeaderBoard.findMany({
         orderBy: {
           ranking: "asc",
         },
       });
-      let findWpm = false;
       if (leaderboard.length === 0) {
         await prisma.fifteenLeaderBoard.create({
           data: {
@@ -60,27 +108,41 @@ const leaderBoard = async (wpm: string, userId: string, table: string) => {
           },
         });
       }
-      for (let i = 0; i < leaderboard.length; i++) {
+      let pointer = 0;
+      for (let i = pointer; i < leaderboard.length; i++) {
         const wordsPerMinute = leaderboard[i].wpm;
         if (wordsPerMinute < wpm) {
-          for (let j = i; j < leaderboard.length; j++) {
-            await prisma.fifteenLeaderBoard.update({
-              where: {
-                id: leaderboard[j].id,
-              },
-              data: {
-                ranking: {
-                  increment: 1,
-                },
-              },
-            });
-            findWpm = true;
-            break;
-          }
-          if (findWpm) {
-            break;
-          }
+          await prisma.fifteenLeaderBoard.create({
+            data: {
+              wpm,
+              ranking: leaderboard[i].ranking,
+              userId
+            }
+          })
+          break;
         }
+        pointer++;
+      }
+      if(pointer === leaderboard.length) {
+        await prisma.fifteenLeaderBoard.create({
+          data: {
+            userId,
+            ranking: await prisma.fifteenLeaderBoard.count() + 1,
+            wpm
+          }
+        })
+      }
+      for (let j = pointer; j < leaderboard.length; j++) {
+        await prisma.fifteenLeaderBoard.update({
+          where: {
+            id: leaderboard[j].id,
+          },
+          data: {
+            ranking: {
+              increment: 1,
+            },
+          },
+        });
       }
     }
   } catch (error) {}

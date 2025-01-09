@@ -2,12 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Card from "../ui/Card";
 import TestCard from "../ui/TestCard";
-
 import { Trophy, Clock, Target, Medal } from "lucide-react";
 import RankingCard from "../ui/RankingCard";
 import { timeAtom } from "../store/TimeAtom";
 import { useRecoilValue } from "recoil";
-
 
 interface UserObject {
   id: string;
@@ -48,11 +46,11 @@ const UserProfile = () => {
       // console.log(response1.data)
       const avg = response1.data;
       console.log(avg);
-      setAverage(avg);
+      setAverage([avg.avgFivteen, avg.avgthirty, avg.avgSixty]);
+      console.log("this is the average state variable", average)
 
-      // const response2 = await axios.post(`${import.meta.env.VITE_API_PATH}/leaderboard/${userId}`)
-      // setRanking(prev => [...prev, response2.data.sixty])
-      // setRanking(prev => [...prev, response2.data.fivteen])
+      const response2 = await axios.post(`${import.meta.env.VITE_API_PATH}/leaderboard/${userId}`)
+      setRanking([response2.data.fivteen, response2.data.sixty])
     };
     fetchUser();
   }, []);
@@ -71,17 +69,17 @@ const UserProfile = () => {
           <div className="flex space-x-7 ml-3">
             <Card
               second={15}
-              wpm={`${average[0] !== undefined ? average[0] : "0"}`}
+              wpm={`${!isNaN(average[0]) ? average[0] : "0"}`}
               icon={<Trophy className="text-yellow-400" />}
             ></Card>
             <Card
               second={30}
-              wpm={`${average[1] !== undefined ? average[1] : "0"}`}
+              wpm={`${!isNaN(average[1])  ? average[1] : "0"}`}
               icon={<Trophy className="text-yellow-400" />}
             ></Card>
             <Card
               second={60}
-              wpm={`${average[2] !== undefined ? average[2] : "0"}`}
+              wpm={`${!isNaN(average[2])  ? average[2] : "0"}`}
               icon={<Trophy className="text-yellow-400" />}
             ></Card>
           </div>
@@ -100,14 +98,14 @@ const UserProfile = () => {
           <div className="flex space-x-7">
             <RankingCard
               second={15}
-              ranking={ranking[0]}
+              ranking={`${!isNaN(ranking[0]) ? ranking[0] : "0"}`}
               BestUserScore="100"
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
             ></RankingCard>
             <RankingCard
               second={60}
-              ranking={ranking[1]}
+              ranking={`${!isNaN(ranking[1]) ? ranking[1] : "0"}`}
               BestUserScore="100"
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
