@@ -3,7 +3,6 @@ import Hero from "../component/Hero";
 const LandingPage = () => {
   return (
     <div className="bg-[#121212] min-h-screen px-20 pt-10">
-      <Header />
       <Hero />
     </div>
   );

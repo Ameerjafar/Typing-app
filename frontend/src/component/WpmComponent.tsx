@@ -1,16 +1,20 @@
 import { useEffect, useState, useRef } from "react";
-import { useRecoilValue } from "recoil";
-import { textAtom } from "../store/textAtom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { textAtom, wordAtom } from "../store/textAtom";
 import { timeAtom } from "../store/TimeAtom";
-import { paragraph } from "../store/paragraph";
 import axios from "axios";
-import { fetchAccuracy } from "../UserData";
-
+import { wordGenerator } from "./wordList";
+import { useNavigate } from "react-router-dom";
+import { counterAtom } from "../store/TimeAtom";
+import { paragraphActive } from "../store/paragraph";
 const WpmComponent = () => {
+  const navigate = useNavigate();
+  const setCounter = useSetRecoilState(counterAtom);
+  const paraFocus = useSetRecoilState(paragraphActive);
   const [wpm, setWpm] = useState("0");
-  const [accuracy, setAccuracy] = useState("0");
+  const [accuracy, setAccuracy] = useState<string>("0");
   const text = useRecoilValue(textAtom);
-  const words = useRecoilValue(paragraph);
+  const [ words, setWords ] = useRecoilState(wordAtom);
   const time = useRecoilValue(timeAtom);
   const AccuracyRef = useRef(false);
   const [correctedCharacters, setCorrectedCharacter] = useState<number>(0);
@@ -59,13 +63,18 @@ const WpmComponent = () => {
       postData()
       AccuracyRef.current = true;
     }
+    setWords(wordGenerator())
   }, [ wpm, accuracy ]);
 
   return (
     <div className="font-mono text-3xl text-[#333333]">
       <div>{wpm} wpm</div>
       <div className="mt-3">{accuracy} Accuracy</div>
-      <button className="w-36 h-20 mt-4 border-2 text-white">Restart</button>
+      <button onClick = { () => {
+        navigate('/');
+        setCounter(0);
+        paraFocus(false);
+      }} className="w-36 h-20 mt-4 border-2 text-white">Restart</button>
     </div>
   );
 };

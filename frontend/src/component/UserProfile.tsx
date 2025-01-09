@@ -19,7 +19,7 @@ const UserProfile = () => {
   const [user, setUser] = useState<UserObject>();
   const [average, setAverage] = useState<number[]>([]);
   const [ranking, setRanking] = useState<number[]>([]);
-  const [wpm, setWpm] = useState<string>("0");
+  const [wpm, setWpm] = useState<number[]>([]);
   const [accuracy, setAccuracy] = useState<string>("0");
   const time = useRecoilValue(timeAtom);
   useEffect(() => {
@@ -52,6 +52,7 @@ const UserProfile = () => {
       const ranking = response2.data;
       console.log("this is the ranking", ranking)
       setRanking([ranking.fivteen, ranking.sixty])
+      setWpm([ranking.fivWpm, ranking.sixWpm])
       console.log(ranking);
     };
     fetchUser();
@@ -101,14 +102,14 @@ const UserProfile = () => {
             <RankingCard
               second={15}
               ranking={`${ranking[0] !== null ? ranking[0] : "0"}`}
-              BestUserScore="100"
+              BestUserScore={`${wpm[0] !== null ? wpm[0] : "0"}`}
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
             ></RankingCard>
             <RankingCard
               second={60}
               ranking={`${ranking[1] !== null ? ranking[1] : "0"}`}
-              BestUserScore="100"
+              BestUserScore={`${wpm[1] !== null ? wpm[1] : "0"}`}
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
             ></RankingCard>

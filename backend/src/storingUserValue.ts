@@ -63,6 +63,7 @@ const leaderBoard = async (wpm: string, userId: string, table: string) => {
             wpm,
           },
         });
+        return;
       }
       for (let j = pointer; j < leaderboard.length; j++) {
         await prisma.sixtyLeaderBoard.update({
@@ -226,7 +227,7 @@ const showUserRanking = async (req: Request, res: Response) => {
     })
     console.log(sixty);
     console.log(fivteen);
-    res.status(200).json({ sixty: sixty !== null ? sixty?.ranking : 0, fivteen: fivteen !== null ? fivteen?.ranking : 0 });
+    res.status(200).json({ sixty: sixty !== null ? sixty?.ranking : 0, fivteen: fivteen !== null ? fivteen?.ranking : 0, sixWpm: sixty?.wpm, fivWpm: fivteen?.wpm });
   } catch (error) {
     res.status(400).json(error);
   }

@@ -33,7 +33,7 @@ const RankingCard = ({ second, ranking, BestUserScore, icon1, icon2 }: RankingCa
             <div className = 'text-2xl mt-2 mb-3'>Your Best Typed</div>
             <div className = 'flex text-xl space-x-4 justify-center '>
                 <div className = 'pb-10'>
-                    { BestUserScore }
+                    { BestUserScore !== "0" ? BestUserScore : '-' }
                 </div>
                 <div className = 'text-gray-400'>
                     WPM 

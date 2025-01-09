@@ -1,19 +1,17 @@
 import { useState, useEffect, createRef } from "react";
-import { randomWord } from "./wordList";
 import CursorBlinker from "../ui/CursorBlinker";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { paragraphActive, paragraphFocus, inCorrect } from "../store/paragraph";
-import { textAtom, currentWordIndex } from "../store/textAtom";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import { paragraphActive, paragraphFocus } from "../store/paragraph";
+import { textAtom, currentWordIndex, wordAtom } from "../store/textAtom";
 const Test = () => {
-  const [words, setWords] = useState(randomWord);
+  const words = useRecoilValue(wordAtom);
   const [focus, setFocus] = useRecoilState(paragraphFocus);
   const [text, setText] = useRecoilState(textAtom);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [wordCharacter, setWordCharacter] = useState<string[]>();
-  const [currentWordInd, setCurrentWordIndex] = useRecoilState<number>(currentWordIndex);
+  const [currentWordInd, setCurrentWordIndex] =
+    useRecoilState<number>(currentWordIndex);
   const setParagraphActive = useSetRecoilState(paragraphActive);
-  const setIsCorrectCharacter = useSetRecoilState(inCorrect);
-  const [textAccuracy, setTextAccuracy] = useState<boolean[]>([]);
   const emptySpans = () => {
     return Array(words.length)
       .fill(0)
@@ -24,6 +22,7 @@ const Test = () => {
   const keyHandler = (event) => {
     setParagraphActive(true);
     const { key } = event;
+    console.log(key);
     if (key === " ") {
       event.preventDefault();
       setText((prev) => [...prev, " "]);
@@ -38,8 +37,23 @@ const Test = () => {
       if (text[text.length - 1] === " ") {
         setCurrentWordIndex((prev) => prev - 1);
       }
-      setText(text.slice(0, text.length - 1));
-      setCurrentIndex((prev) => prev - 1);
+      if (event.ctrlKey) {
+        console.log("control and backspace is calling");
+        let pointer = text.length - 1;
+        let dupText = text;
+        while (pointer >= 0) {
+          if (dupText[pointer] !== " ") {
+            dupText = dupText.slice(0, text.length - 1);
+          } else {
+            break;
+          }
+          pointer--;
+        }
+        setText(dupText);
+      } else {
+        setText(text.slice(0, text.length - 1));
+        setCurrentIndex((prev) => prev - 1);
+      }
     }
   };
   useEffect(() => {
@@ -90,13 +104,12 @@ const Test = () => {
           </div>
         )}
         <div className="absolute">
-          <div className="text-white tracking-wide leading-loose max-h-52 break-all">
+          <div className="text-white tracking-wide leading-loose max-h-52">
             {text.map((character, ind) => {
               const i = currentIndex - 1 === ind;
               const correctCharacter = character === wordCharacter![ind];
               return (
-                <span key={ind}
-                >
+                <span key={ind}>
                   {correctCharacter ? (
                     <span className="text-white" key={ind}>
                       {character}
@@ -120,7 +133,7 @@ const Test = () => {
         </div>
         <div
           onKeyDown={keyHandler}
-          className="leading-loose text-left h-52 tracking-wide outline-none break-all"
+          className="leading-loose text-left h-52 tracking-wide outline-none"
           tabIndex={0}
           onBlur={() => setFocus(false)}
           onFocus={() => {
