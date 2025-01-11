@@ -32,8 +32,8 @@ const WpmComponent = () => {
     }, 0);
     setCorrectedCharacter(correctCount);
     const min = time / 60;
-    const word = (correctedCharacters / 5 / min).toFixed(2);
-    const acc = ((correctedCharacters / text.length) * 100).toFixed(2);
+    const word = Math.round((correctedCharacters / 5 / min)).toFixed(2);
+    const acc = Math.round((correctedCharacters / text.length) * 100).toFixed(2);
     console.log(word);
     setWpm(word);
     setAccuracy(acc);
@@ -63,7 +63,6 @@ const WpmComponent = () => {
       postData()
       AccuracyRef.current = true;
     }
-    setWords(wordGenerator())
   }, [ wpm, accuracy ]);
 
   return (
@@ -74,6 +73,7 @@ const WpmComponent = () => {
         navigate('/');
         setCounter(0);
         paraFocus(false);
+        setWords(wordGenerator())
       }} className="w-36 h-20 mt-4 border-2 text-white">Restart</button>
     </div>
   );

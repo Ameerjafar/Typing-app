@@ -6,7 +6,6 @@ import AuthComponent from "./component/authComponent/AuthComponent"
 import toast from "react-hot-toast"
 import UserProfile from "./component/UserProfile"
 function App() {
-  localStorage.setItem("isLogin", "false");
   const [ isLogin, setIsLogin ] = localStorage.getItem("isLogin");
   return (
     <RecoilRoot>

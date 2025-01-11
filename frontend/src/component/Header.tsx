@@ -7,7 +7,7 @@ const Header = () => {
   );
   return (
     <div className="flex justify-between font-mono w-full">
-      <button className="text-white font-bold text-4xl">Typing-App</button>
+      <button className="text-white font-bold md:text-4xl">Typing-App</button>
       <div className="flex text-white font-bold text-2xl space-x-10 mt-2">
       <span>Multiplayer</span>
         {isLogin && (
@@ -15,7 +15,7 @@ const Header = () => {
             onClick={() => {
               navigate("/profile");
             }}
-            className="h-10 w-10 rounded-full text-black bg-white"
+            className="h-10 w-10 rounded-full text-black font-bold bg-white"
           >
             U
           </button>

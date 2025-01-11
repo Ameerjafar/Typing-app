@@ -22,12 +22,13 @@ const Reset = () => {
         setParagraphFocus(false);   
         setCurrentWordIndex(0);
         setWord(wordGenerator())
+        
         if(counter === time) {
             const response = updateTestCompleted();
             console.log(response);
             toast.success("Your test has updated successfully");
         }
-        else {
+        else if(counter > 0) {
             updateTestStarted();
             toast.success("store successfully")
         }

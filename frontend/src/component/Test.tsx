@@ -104,7 +104,7 @@ const Test = () => {
           </div>
         )}
         <div className="absolute">
-          <div className="text-white tracking-wide leading-loose max-h-52">
+          <div className="tracking-wide leading-loose max-h-52">
             {text.map((character, ind) => {
               const i = currentIndex - 1 === ind;
               const correctCharacter = character === wordCharacter![ind];
@@ -133,7 +133,7 @@ const Test = () => {
         </div>
         <div
           onKeyDown={keyHandler}
-          className="leading-loose text-left h-52 tracking-wide outline-none"
+          className="leading-loose text-left h-52 tracking-wide outline-none break-all"
           tabIndex={0}
           onBlur={() => setFocus(false)}
           onFocus={() => {
