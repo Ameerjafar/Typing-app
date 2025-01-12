@@ -28,5 +28,5 @@ io.on('connection', (socket: Socket) => {
 wsHttpServer.listen(WS_PORT, () => {
   console.log(`WebSocket server is running on ws://localhost:${WS_PORT}`);
 });
-
+// web socket server is not working.
 export default io;
