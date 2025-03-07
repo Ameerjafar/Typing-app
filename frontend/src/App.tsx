@@ -3,7 +3,6 @@ import LandingPage from "./pages/LandingPage"
 import { RecoilRoot } from "recoil"
 import Result from "./component/Result"
 import AuthComponent from "./component/authComponent/AuthComponent"
-import toast from "react-hot-toast"
 import UserProfile from "./component/UserProfile"
 function App() {
   const [ isLogin, setIsLogin ] = localStorage.getItem("isLogin");

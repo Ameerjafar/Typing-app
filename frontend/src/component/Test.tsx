@@ -18,7 +18,6 @@ const Test = () => {
       .map(() => createRef<HTMLSpanElement>());
   };
   const [wordRef, setWordRef] = useState(emptySpans);
-
   const keyHandler = (event) => {
     setParagraphActive(true);
     const { key } = event;
@@ -43,6 +42,7 @@ const Test = () => {
         let dupText = text;
         while (pointer >= 0) {
           if (dupText[pointer] !== " ") {
+
             dupText = dupText.slice(0, text.length - 1);
           } else {
             break;
@@ -98,13 +98,13 @@ const Test = () => {
   return (
     <div>
       <div>
-        {focus && text.length === 0 && (
-          <div className="absolute z-1 mt-5">
+        {focus && text.length === 0  && (
+          <div className="absolute mt-4">
             <CursorBlinker />
           </div>
         )}
         <div className="absolute">
-          <div className="tracking-wide leading-loose max-h-52">
+          <div className="tracking-wide text-left leading-loose max-h-52 mr-10">
             {text.map((character, ind) => {
               const i = currentIndex - 1 === ind;
               const correctCharacter = character === wordCharacter![ind];
@@ -132,8 +132,8 @@ const Test = () => {
           </div>
         </div>
         <div
-          onKeyDown={keyHandler}
-          className="leading-loose text-left h-52 tracking-wide outline-none break-all"
+          onKeyDown={ keyHandler }
+          className="leading-loose text-left h-52 mr-10 tracking-wide outline-none"
           tabIndex={0}
           onBlur={() => setFocus(false)}
           onFocus={() => {
@@ -142,9 +142,9 @@ const Test = () => {
         >
           {words.map((word, ind) => {
             return (
-              <span ref={wordRef[ind]} key={ind}>
-                {word + " "}
-              </span>
+                <span ref={wordRef[ind]} key={ind}>
+                  { word + " " }
+                </span>
             );
           })}
         </div>
