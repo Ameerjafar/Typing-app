@@ -4,6 +4,7 @@ import { RecoilRoot } from "recoil"
 import Result from "./component/Result"
 import AuthComponent from "./component/authComponent/AuthComponent"
 import UserProfile from "./component/UserProfile"
+import WebSocketServer from "./ws/WebSocket"
 function App() {
   const [ isLogin, setIsLogin ] = localStorage.getItem("isLogin");
   return (
@@ -16,6 +17,7 @@ function App() {
             {/* <Route path = '/word' element = { <Word />}></Route> */}
             <Route path = '/login' element = { <AuthComponent />}></Route>
             {isLogin && <Route path = '/profile' element = { <UserProfile />}></Route>}
+            <Route path='/multiplayer' element = { <WebSocketServer />}></Route>
           </Routes>
         </BrowserRouter>
       </div>

@@ -2,12 +2,12 @@ import { useState, useEffect, createRef } from "react";
 import CursorBlinker from "../ui/CursorBlinker";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { paragraphActive, paragraphFocus } from "../store/paragraph";
-import { textAtom, currentWordIndex, wordAtom } from "../store/textAtom";
+import { textAtom, currentWordIndex, wordAtom , currentInd} from "../store/textAtom";
 const Test = () => {
   const words = useRecoilValue(wordAtom);
   const [focus, setFocus] = useRecoilState(paragraphFocus);
   const [text, setText] = useRecoilState(textAtom);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useRecoilState(currentInd);
   const [wordCharacter, setWordCharacter] = useState<string[]>();
   const [currentWordInd, setCurrentWordIndex] =
     useRecoilState<number>(currentWordIndex);

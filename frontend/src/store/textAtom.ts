@@ -1,6 +1,10 @@
 import { atom } from 'recoil'
 import { wordGenerator } from '../component/wordList'
 
+export const currentInd = atom<number>({
+    key: "currentInd",
+    default: 0
+})
 
 export const textAtom = atom<string[]>({
     key: "textAtom",
