@@ -6,25 +6,26 @@ const httpServer = app.listen(8080, () => {
   console.log('HTTP server running on http://localhost:8080');
 });
 
-interface CustomWebSocket extends WebSocket {
-  room?: string;
-}
-
 const wss = new WebSocketServer({ server: httpServer });
-const rooms = new Map<string, Set<CustomWebSocket>>();
-
-wss.on('connection', (ws: CustomWebSocket) => {
+const rooms = new Map();
+wss.on('connection', (ws: WebSocket) => {
   ws.on('message', (data: string) => {
     try {
       const parsedData = JSON.parse(data);
 
       if (parsedData.type === 'CreateRoom') {
-        const roomId = parsedData.room;
+        const roomId = parsedData.roomId;
         if (!rooms.has(roomId)) {
-          rooms.set(roomId, new Set());
-          console.log(rooms);
-          rooms.get(roomId)!.add(ws);
-          ws.room = roomId;
+          rooms.set(roomId, {
+            players: new Set(),
+            text: parsedData.text
+          });
+          rooms.get(roomId)!['players'].add({
+            ws: ws,
+            name: parsedData.name,
+            index: 0
+          });
+
           ws.send(JSON.stringify({ type: 'success', message: `Room '${roomId}' created.` }));
         } else {
           ws.send(JSON.stringify({ type: 'error', message: `Room '${roomId}' already exists.` }));
@@ -32,22 +33,34 @@ wss.on('connection', (ws: CustomWebSocket) => {
       }
 
       if (parsedData.type === 'JoinRoom') {
-        const room = parsedData.room;
-        if (!rooms.has(room)) {
-          ws.send(JSON.stringify({ type: 'error', message: `Room '${room}' does not exist.` }));
+        const roomId = parsedData.roomId;
+        if (!rooms.has(roomId)) {
+          ws.send(JSON.stringify({ type: 'error', message: `Room '${roomId}' does not exist.` }));
           return;
         }
-        rooms.get(room)!.add(ws);
-        ws.room = room;
-        ws.send(JSON.stringify({ type: 'success', message: `Joined room '${room}'` }));
+        rooms.get(roomId)!['players'].add({
+          ws: ws,
+          name: parsedData.name,
+          index: 0
+        })
+        rooms.get(roomId)!['players'].forEach((player: any) => {
+          if(player.ws.readyState === WebSocket.OPEN) {
+            player.ws.send(JSON.stringify({
+              type: 'playerJoined',
+              message: `${parsedData.name} has joined the room`,
+              playerName: parsedData.name
+            }))
+          }
+        })
+        ws.send(JSON.stringify({ type: 'success', message: `Joined room '${roomId}'` }));
       }
 
       if (parsedData.type === 'message') {
-        const room = ws.room;
+        const room = parsedData.roomId;
         if (room && rooms.has(room)) {
-          rooms.get(room)!.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-              client.send(JSON.stringify({ type: 'message', message: parsedData.message }));
+          rooms.get(room)!['players'].forEach((client: any) => {
+            if (client.ws.readyState === WebSocket.OPEN) {
+              client.ws.send(JSON.stringify({ type: 'message', message: parsedData.message }));
             }
           });
         } else {
@@ -59,15 +72,30 @@ wss.on('connection', (ws: CustomWebSocket) => {
     }
   });
   ws.on('close', () => {
-    const room = ws.room;
-    if (room && rooms.has(room)) {
-      rooms.get(room)!.delete(ws);
-      if (rooms.get(room)!.size === 0) {
-        rooms.delete(room); 
-      }
-    }
+    // Search through all rooms to find and remove the disconnected player
+    rooms.forEach((roomData, roomId) => {
+        const players = roomData.players;
+        players.forEach((player: any) => {
+            if (player.ws === ws) {
+                players.delete(player);
+                players.forEach((remainingPlayer: any) => {
+                    if (remainingPlayer.ws.readyState === WebSocket.OPEN) {
+                        remainingPlayer.ws.send(JSON.stringify({
+                            type: 'playerLeft',
+                            message: `${player.name} has left the room`,
+                            playerName: player.name
+                        }));
+                    }
+                });
+                if (players.size === 0) {
+                    rooms.delete(roomId);
+                }
+            }
+        });
+    });
+    
     console.log('Client disconnected');
-  });
+});
   ws.on('error', (err) => {
     console.error('WebSocket error:', err);
   });

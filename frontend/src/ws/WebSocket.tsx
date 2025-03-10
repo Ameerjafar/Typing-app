@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil';
 import { currentInd } from '../store/textAtom';
-
 function WebSocketServer() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [ latestMessage, setLatestMessage ] = useState<string>("");
@@ -12,16 +11,35 @@ function WebSocketServer() {
   const [opponentCurrentInd, setOpponentCurrentInd] = useState<string>();
   console.log(roomId);
   const createRoomHandler = () => {
-    setRoomId(Math.random.toString().substring(2, 6));
+    setRoomId(Math.random().toString().substring(2, 6));
+    console.log(roomId);
     setShowRoomId(true);
+    socket!.send(JSON.stringify({
+      type: 'CreateRoom',
+      room: roomId
+    }))
   }
   const roomHandler = () => {
+    if(socket && roomId) {
+      socket.send(JSON.stringify({
+        type: "JoinRoom",
+        room: roomId
+      }))
+    }
   }
+  useEffect(() => {
+    if(socket && roomId) {
+      socket.send(JSON.stringify({
+        type: "IndexUpdate",
+        room: roomId,
+        index: currentIndex
+      }))
+    }
+  }, [currentInd, socket, roomId])
   useEffect(() => {
     const newSocket = new WebSocket('ws://localhost:8080');
     newSocket.onopen = () => {
       console.log('Connection established');
-      newSocket.send(JSON.stringify({ type: 'JoinRoom', room: `${roomId}` }));
       newSocket.send('Hello Server!');
     }
     newSocket.onmessage = (message) => {
