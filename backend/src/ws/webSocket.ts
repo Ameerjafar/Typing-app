@@ -1,6 +1,5 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import express from 'express';
-
 const app = express();
 const httpServer = app.listen(8080, () => {
   console.log('HTTP server running on http://localhost:8080');
@@ -18,7 +17,8 @@ wss.on('connection', (ws: WebSocket) => {
         if (!rooms.has(roomId)) {
           rooms.set(roomId, {
             players: new Set(),
-            text: parsedData.text
+            text: parsedData.text,
+            admin: true
           });
           rooms.get(roomId)!['players'].add({
             ws: ws,
@@ -31,6 +31,7 @@ wss.on('connection', (ws: WebSocket) => {
           ws.send(JSON.stringify({ type: 'error', message: `Room '${roomId}' already exists.` }));
         }
       }
+
 
       if (parsedData.type === 'JoinRoom') {
         const roomId = parsedData.roomId;
@@ -67,12 +68,37 @@ wss.on('connection', (ws: WebSocket) => {
           ws.send(JSON.stringify({ type: 'error', message: `You are not in a valid room.` }));
         }
       }
+      if(parsedData.type === 'IndexUpdate') {
+        const roomId = parsedData.roomId;
+        if(rooms.has(roomId)) {
+          rooms.get(roomId)!['players'].forEach((player: any) => {
+            if(player.ws.readyState === WebSocket.OPEN) {
+              player.ws.send(JSON.stringify({
+                type: 'IndexUpdate',
+                roomId: roomId,
+                index: parsedData.index
+              }))
+            }
+          })
+        }
+      }
+      if (parsedData.type === 'gameStart') {
+        const room = parsedData.roomId;
+        if (rooms.has(room)) {
+            rooms.get(room)!['players'].forEach((player: any) => {
+                if (player.ws.readyState === WebSocket.OPEN) {
+                    player.ws.send(JSON.stringify({
+                        type: 'gameStart',
+                        text: rooms.get(room)!['text']
+                    }));  
+        }   });
+        }
+    }
     } catch (err) {
       console.error('Error processing message:', err);
     }
   });
   ws.on('close', () => {
-    // Search through all rooms to find and remove the disconnected player
     rooms.forEach((roomData, roomId) => {
         const players = roomData.players;
         players.forEach((player: any) => {

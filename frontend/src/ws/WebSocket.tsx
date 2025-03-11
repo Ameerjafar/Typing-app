@@ -1,24 +1,25 @@
-
 import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil';
-import { currentInd } from '../store/textAtom';
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
+import { currentInd, isMultiPlayer, textAtom } from '../store/textAtom';
 function WebSocketServer() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [ latestMessage, setLatestMessage ] = useState<string>("");
   const [ roomId, setRoomId ] = useState<string>("");
-  const [ showRoomId, setShowRoomId ] = useState<boolean>(false);
   const currentIndex = useRecoilValue(currentInd);
-  const [opponentCurrentInd, setOpponentCurrentInd] = useState<string>();
+  const [text, setText] = useRecoilState(textAtom);
+  const setMultiPlayer = useSetRecoilState(isMultiPlayer);
   console.log(roomId);
   const createRoomHandler = () => {
     setRoomId(Math.random().toString().substring(2, 6));
     console.log(roomId);
-    setShowRoomId(true);
     socket!.send(JSON.stringify({
       type: 'CreateRoom',
-      room: roomId
+      room: roomId,
+      text: text,
+      admin: true
     }))
+    setMultiPlayer(true);
   }
+
   const roomHandler = () => {
     if(socket && roomId) {
       socket.send(JSON.stringify({
@@ -26,6 +27,7 @@ function WebSocketServer() {
         room: roomId
       }))
     }
+    setMultiPlayer(true);
   }
   useEffect(() => {
     if(socket && roomId) {
@@ -43,12 +45,24 @@ function WebSocketServer() {
       newSocket.send('Hello Server!');
     }
     newSocket.onmessage = (message) => {
+      const parsedData = JSON.parse(message.data);
+      if(parsedData.type === 'gameStart') {
+        setText(parsedData.text);
+      }
       console.log('Message received:', message.data);
     }
     setSocket(newSocket);
     return () => newSocket.close();
   }, [])
-
+  useEffect(() => {
+    if(socket && roomId) {
+      socket.send(JSON.stringify({
+        type: 'IndexUpdate',
+        roomId: roomId, 
+        index: currentIndex
+      }))
+    }
+  }, [currentIndex, roomId, socket])
   return (
     <>
      <div className = ''>

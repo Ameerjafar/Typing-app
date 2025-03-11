@@ -21,3 +21,8 @@ export const wordAtom = atom<string[]>({
     key: "wordAtom",
     default: wordGenerator()
 })
+
+export const isMultiPlayer = atom<boolean>({
+    key: "isMultiPlayer",
+    default: false
+})

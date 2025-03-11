@@ -2,7 +2,7 @@ import { useState, useEffect, createRef } from "react";
 import CursorBlinker from "../ui/CursorBlinker";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { paragraphActive, paragraphFocus } from "../store/paragraph";
-import { textAtom, currentWordIndex, wordAtom , currentInd} from "../store/textAtom";
+import { textAtom, currentWordIndex, wordAtom , currentInd, isMultiPlayer} from "../store/textAtom";
 const Test = () => {
   const words = useRecoilValue(wordAtom);
   const [focus, setFocus] = useRecoilState(paragraphFocus);
@@ -66,6 +66,7 @@ const Test = () => {
       });
     }
   }, [currentWordInd]);
+  
   // useEffect(() => {
   //   if (text.length !== 0) {
   //     console.log("this is the word length", words[currentWordInd - 1].length);
