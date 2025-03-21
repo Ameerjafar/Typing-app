@@ -19,7 +19,6 @@ function WebSocketServer() {
     }))
     setMultiPlayer(true);
   }
-
   const roomHandler = () => {
     if(socket && roomId) {
       socket.send(JSON.stringify({
