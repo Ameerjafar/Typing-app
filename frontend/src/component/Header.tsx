@@ -1,11 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
 const Header = () => {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState<boolean>(
-    localStorage.getItem("isLogin") === "true"
-  );
+  const token = localStorage.getItem("token");
 
   return (
     <div className="flex justify-between items-center font-mono w-full px-4 py-3 sm:px-6 md:px-8">
@@ -16,12 +12,12 @@ const Header = () => {
         Typing-App
       </button>
 
-      <div className="flex items-center text-white space-x-3 sm:space-x-6 md:space-x-10">
+      <div className="flex mr-10 items-center text-white space-x-3 sm:space-x-6 md:space-x-10">
         <span className="text-sm sm:text-base md:text-xl lg:text-2xl hover:text-gray-300 cursor-pointer transition-colors">
           Multiplayer
         </span>
 
-        {isLogin && (
+        {token ? (
           <button
             onClick={() => navigate("/profile")}
             className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 rounded-full 
@@ -31,7 +27,7 @@ const Header = () => {
           >
             U
           </button>
-        )}
+        ) : <button className = "text-sm sm:text-base md:text-xl lg:text-2xl hover:text-gray-300 cursor-pointer transition-colors" onClick = { () => navigate('/login')}>Login</button>}
       </div>
     </div>
   );

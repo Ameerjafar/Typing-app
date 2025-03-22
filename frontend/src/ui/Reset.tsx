@@ -1,7 +1,7 @@
 
 import { RotateCcw } from 'lucide-react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
-import { textAtom, currentWordIndex, wordAtom } from '../store/textAtom'
+import { textAtom, currentWordIndex, wordAtom, currentInd } from '../store/textAtom'
 import { counterAtom, timeAtom  } from '../store/TimeAtom'
 import { paragraphFocus, paragraphActive } from '../store/paragraph'
 import toast from 'react-hot-toast'
@@ -14,10 +14,13 @@ const Reset = () => {
     const setParagraphFocus = useSetRecoilState(paragraphFocus)
     const setWord = useSetRecoilState(wordAtom)
     const setCurrentWordIndex = useSetRecoilState(currentWordIndex);
-    const time = useRecoilValue(timeAtom);
+    const [time, setTime] = useRecoilState(timeAtom);
+    const setCurrentIndex = useSetRecoilState(currentInd);
     const resetHandler = async () => {
+        setCurrentIndex(0);
         setText([]);
-        setCounter(0);
+        setCounter(15);
+        setTime(15);
         isActive(false);
         setParagraphFocus(false);   
         setCurrentWordIndex(0);
@@ -28,7 +31,7 @@ const Reset = () => {
             console.log(response);
             toast.success("Your test has updated successfully");
         }
-        else if(counter > 0) {
+        else if(counter < time) {
             updateTestStarted();
             toast.success("store successfully")
         }

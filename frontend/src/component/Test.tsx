@@ -2,7 +2,12 @@ import { useState, useEffect, createRef } from "react";
 import CursorBlinker from "../ui/CursorBlinker";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { paragraphActive, paragraphFocus } from "../store/paragraph";
-import { textAtom, currentWordIndex, wordAtom , currentInd, isMultiPlayer} from "../store/textAtom";
+import {
+  textAtom,
+  currentWordIndex,
+  wordAtom,
+  currentInd,
+} from "../store/textAtom";
 const Test = () => {
   const words = useRecoilValue(wordAtom);
   const [focus, setFocus] = useRecoilState(paragraphFocus);
@@ -42,31 +47,51 @@ const Test = () => {
         let dupText = text;
         while (pointer >= 0) {
           if (dupText[pointer] !== " ") {
-
-            dupText = dupText.slice(0, text.length - 1);
+            dupText = dupText.slice(0, dupText.length - 1);
           } else {
             break;
           }
           pointer--;
         }
         setText(dupText);
+        setCurrentIndex(dupText.length);
       } else {
         setText(text.slice(0, text.length - 1));
-        setCurrentIndex((prev) => prev - 1);
+        if (text.length === 0) {
+          setCurrentIndex(0);
+        } else {
+          setCurrentIndex((prev) => prev - 1);
+        }
       }
     }
   };
   useEffect(() => {
+    // Check if current word ref exists and if there's a next word
     if (
-      wordRef[currentWordInd].current!.offsetLeft >
-      wordRef[currentWordInd + 1].current!.offsetLeft
+      wordRef[currentWordInd]?.current &&
+      wordRef[currentWordInd + 1]?.current &&
+      currentWordInd < words.length - 1
     ) {
-      wordRef[currentWordInd].current?.scrollIntoView({
-        behavior: "smooth",
-      });
+      const currentRect =
+        wordRef[currentWordInd].current!.getBoundingClientRect();
+      const nextRect =
+        wordRef[currentWordInd + 1].current!.getBoundingClientRect();
+
+      const currentWordLength = words[currentWordInd].length;
+      const currentWordStart = words
+        .slice(0, currentWordInd)
+        .reduce((acc, word) => acc + word.length + 1, 0);
+      const hasCompletedWord =
+        text.length >= currentWordStart + currentWordLength;
+
+      if (currentRect.top < nextRect.top && hasCompletedWord) {
+        wordRef[currentWordInd].current?.scrollIntoView({
+          behavior: "smooth",
+        });
+      }
     }
-  }, [currentWordInd]);
-  
+  }, [currentWordInd, text.length]);
+
   // useEffect(() => {
   //   if (text.length !== 0) {
   //     console.log("this is the word length", words[currentWordInd - 1].length);
@@ -99,42 +124,44 @@ const Test = () => {
   return (
     <div>
       <div>
-        {focus && text.length === 0  && (
+        {focus && text.length === 0 && (
           <div className="absolute mt-4">
             <CursorBlinker />
           </div>
         )}
         <div className="absolute">
-          <div className="tracking-wide text-left leading-loose max-h-52 mr-10">
-            {text.map((character, ind) => {
-              const i = currentIndex - 1 === ind;
-              const correctCharacter = character === wordCharacter![ind];
-              return (
-                <span key={ind}>
-                  {correctCharacter ? (
-                    <span className="text-white" key={ind}>
-                      {character}
-                    </span>
-                  ) : (
-                    <span
-                      className={`${
-                        wordCharacter![ind] === " "
-                          ? "bg-red-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {wordCharacter![ind]}
-                    </span>
-                  )}
-                  {i && <CursorBlinker />}
-                </span>
-              );
-            })}
-          </div>
+          {text && (
+            <div className="tracking-wide text-left leading-loose max-h-52 mr-10 ">
+              {text.map((character, ind) => {
+                const i = currentIndex - 1 === ind;
+                const correctCharacter = character === wordCharacter![ind];
+                return (
+                  <span key={ind}>
+                    {correctCharacter ? (
+                      <span className="text-white" key={ind}>
+                        {character}
+                      </span>
+                    ) : (
+                      <span
+                        className={`${
+                          wordCharacter![ind] === " "
+                            ? "bg-red-500"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {wordCharacter![ind]}
+                      </span>
+                    )}
+                    {i && <CursorBlinker />}
+                  </span>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div
-          onKeyDown={ keyHandler }
-          className="leading-loose text-left h-52 mr-10 tracking-wide outline-none"
+          onKeyDown={keyHandler}
+          className="leading-loose text-left max-h-32 md:max-h-52 mr-10 tracking-wide outline-none "
           tabIndex={0}
           onBlur={() => setFocus(false)}
           onFocus={() => {
@@ -143,9 +170,9 @@ const Test = () => {
         >
           {words.map((word, ind) => {
             return (
-                <span ref={wordRef[ind]} key={ind}>
-                  { word + " " }
-                </span>
+              <span ref={wordRef[ind]} key={ind}>
+                {word + " "}
+              </span>
             );
           })}
         </div>
