@@ -27,6 +27,7 @@ const UserProfile = () => {
     const fetchUser = async () => {
       const userId = localStorage.getItem("userId");
       const token = localStorage.getItem("token");
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_PATH}/user/${userId}`,
         {
@@ -120,7 +121,7 @@ const UserProfile = () => {
           </div>
           <div className = 'flex justify-center mr-44'>
             <button onClick = { () => {
-              localStorage.setItem("isLogin", "false");
+              localStorage.removeItem('token');
               navigate('/')
             }} className="flex justify-center text-white border-white border-2 text-center p-3 rounded-md mt-10 font-bold text-2xl">
               Logout

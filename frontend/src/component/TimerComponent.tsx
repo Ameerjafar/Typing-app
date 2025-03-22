@@ -28,7 +28,7 @@ const TimerComponent = () => {
                     onClick={() => {
                       setTime(t);
                       setIsActive(false);
-                      setCounter(0);
+                      setCounter(time);
                       setText([]);
                       setParagraphFocus(false);
                       // setInCorrectedCharacter(0);

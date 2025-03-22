@@ -12,17 +12,16 @@ const CounterComponent = () => {
      const setText = useSetRecoilState(textAtom);
      const [ time, setTime ] = useRecoilState(timeAtom);
     useEffect(() => {
-        // if (isActive) return;
         console.log(isActive)
         if (isActive) {
             const timeInterval = setInterval(() => {
                 setCounter((prev) => {
-                    if (prev + 1 === time) {
+                    if (prev - 1 === 0) {
                         clearInterval(timeInterval); 
                         navigate('/result')
                         setText([])
                     }
-                    return prev + 1;
+                    return prev - 1;
                 });
             }, 1000);
             return () => clearInterval(timeInterval);
@@ -32,10 +31,16 @@ const CounterComponent = () => {
         }
     }, [ isActive ]);
     return (
-        <div className = 'text-blue-500 font-mono'>
-            { counter }
-        </div>
-    )
+        <>
+          {counter ? (
+            <div className="text-blue-500 font-mono">
+              {counter}
+            </div>
+          ) : (
+            <div className="animate-spin h-5 w-5 border-2 border-gray-500 border-t-transparent rounded-full"></div>
+          )}
+        </>
+      );
 }
 
 export default CounterComponent;
