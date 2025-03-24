@@ -1,6 +1,6 @@
 
 import { RotateCcw } from 'lucide-react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilState, useSetRecoilState } from 'recoil'
 import { textAtom, currentWordIndex, wordAtom, currentInd } from '../store/textAtom'
 import { counterAtom, timeAtom  } from '../store/TimeAtom'
 import { paragraphFocus, paragraphActive } from '../store/paragraph'

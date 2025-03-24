@@ -10,7 +10,7 @@ const CounterComponent = () => {
      const [ counter,  setCounter ] = useRecoilState(counterAtom)
      const navigate = useNavigate();
      const setText = useSetRecoilState(textAtom);
-     const [ time, setTime ] = useRecoilState(timeAtom);
+     const setTime = useSetRecoilState(timeAtom);
     useEffect(() => {
         console.log(isActive)
         if (isActive) {

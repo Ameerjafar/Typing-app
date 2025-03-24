@@ -13,9 +13,9 @@ const Header = () => {
       </button>
 
       <div className="flex mr-10 items-center text-white space-x-3 sm:space-x-6 md:space-x-10">
-        <span className="text-sm sm:text-base md:text-xl lg:text-2xl hover:text-gray-300 cursor-pointer transition-colors">
+        <button onClick = { () => navigate('/multiplayer')} className="text-sm sm:text-base md:text-xl lg:text-2xl hover:text-gray-300 cursor-pointer transition-colors">
           Multiplayer
-        </span>
+        </button>
 
         {token ? (
           <button
