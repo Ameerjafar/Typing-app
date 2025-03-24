@@ -1,44 +1,59 @@
 import WebSocket, { WebSocketServer } from "ws";
 import express from "express";
-const app = express();
 import { createClient } from "redis";
+import dotenv from 'dotenv';
+dotenv.config();
+const app = express();
+
 const httpServer = app.listen(8080, () => {
   console.log("HTTP server running on http://localhost:8080");
 });
 
 const wss = new WebSocketServer({ server: httpServer });
 
-const rooms = new Map();
 
 const redisClient = createClient({
-  url: 'redis://localhost:6379'
+  url: process.env.REDIS_URL
 });
-
 
 (async () => {
   redisClient.on('error', (err) => console.error('Redis Client Error:', err));
-    await redisClient.connect();
+  await redisClient.connect();
+  console.log("Connected to Redis");
 })();
 
+const rooms = new Map();
+
 wss.on("connection", (ws: WebSocket) => {
-  ws.on("message", (data: string) => {
+  console.log("New client connected");
+
+  ws.on("message", async (data: string) => {
     try {
       const parsedData = JSON.parse(data);
-      console.log(data);
+      console.log("Received message:", parsedData);
+
       if (parsedData.type === "CreateRoom") {
         const roomId = parsedData.roomId;
-        if (!rooms.has(roomId)) {
-          rooms.set(roomId, {
-            players: new Set(),
-            text: parsedData.text,
-            admin: true,
+        const roomExists = await redisClient.exists(roomId);
+
+        if (roomExists === 0) {
+          const playersArray: any = [];
+          await redisClient.hSet(roomId, {
+            players: JSON.stringify(playersArray),
+            text: JSON.stringify(parsedData.text),
+            admin: 'true'
           });
-          rooms.get(roomId)!["players"].add({
+
+          const playersData = await redisClient.hGet(roomId, "players");
+          const players = JSON.parse(playersData!);
+          players.push({
             ws: ws,
             name: parsedData.name,
             index: 0,
           });
-          console.log(rooms);
+
+          await redisClient.hSet(roomId, "players", JSON.stringify(players));
+          console.log(await redisClient.hGetAll(roomId));
           ws.send(
             JSON.stringify({
               type: "roomCreated",
@@ -57,47 +72,62 @@ wss.on("connection", (ws: WebSocket) => {
 
       if (parsedData.type === "JoinRoom") {
         const roomId = parsedData.roomId;
-        console.log(rooms);
-        if (!rooms.has(roomId)) {
+        const roomExists = await redisClient.exists(roomId);
+
+        if (roomExists === 1) {
+          const roomData = await redisClient.hGetAll(roomId);
+          const players = JSON.parse(roomData.players);
+
+          players.push({
+            ws: ws,
+            name: parsedData.name,
+            index: 0,
+          });
+
+          await redisClient.hSet(roomId, "players", JSON.stringify(players));
+
+          players.forEach((player: any) => {
+            if (player.ws.readyState === WebSocket.OPEN) {
+              player.ws.send(
+                JSON.stringify({
+                  type: "playerJoined",
+                  message: `${parsedData.name} has joined the room`,
+                  playerName: parsedData.name,
+                })
+              );
+            }
+          });
+
+          ws.send(
+            JSON.stringify({
+              type: "JoinedRoom",
+              message: `Joined room '${roomId}'`,
+            })
+          );
+        } else {
           ws.send(
             JSON.stringify({
               type: "error",
               message: `Room '${roomId}' does not exist.`,
             })
           );
-          return;
         }
-        rooms.get(roomId)!["players"].add({
-          ws: ws,
-          name: parsedData.name,
-          index: 0,
-        });
-        rooms.get(roomId)!["players"].forEach((player: any) => {
-          if (player.ws.readyState === WebSocket.OPEN) {
-            player.ws.send(
-              JSON.stringify({
-                type: "playerJoined",
-                message: `${parsedData.name} has joined the room`,
-                playerName: parsedData.name,
-              })
-            );
-          }
-        });
-        ws.send(
-          JSON.stringify({
-            type: "JoinedRoom",
-            message: `Joined room '${roomId}'`,
-          })
-        );
       }
 
       if (parsedData.type === "message") {
-        const room = parsedData.roomId;
-        if (room && rooms.has(room)) {
-          rooms.get(room)!["players"].forEach((client: any) => {
-            if (client.ws.readyState === WebSocket.OPEN) {
-              client.ws.send(
-                JSON.stringify({ type: "message", message: parsedData.message })
+        const roomId = parsedData.roomId;
+        const roomExists = await redisClient.exists(roomId);
+
+        if (roomExists === 1) {
+          const roomData = await redisClient.hGetAll(roomId);
+          const players = JSON.parse(roomData.players);
+          players.forEach((player: any) => {
+            if (player.ws.readyState === WebSocket.OPEN) {
+              player.ws.send(
+                JSON.stringify({
+                  type: "message",
+                  message: parsedData.message,
+                })
               );
             }
           });
@@ -110,10 +140,15 @@ wss.on("connection", (ws: WebSocket) => {
           );
         }
       }
+
       if (parsedData.type === "IndexUpdate") {
         const roomId = parsedData.roomId;
-        if (rooms.has(roomId)) {
-          rooms.get(roomId)!["players"].forEach((player: any) => {
+        const roomExists = await redisClient.exists(roomId);
+
+        if (roomExists === 1) {
+          const roomData = await redisClient.hGetAll(roomId);
+          const players = JSON.parse(roomData.players);
+          players.forEach((player: any) => {
             if (player.ws.readyState === WebSocket.OPEN) {
               player.ws.send(
                 JSON.stringify({
@@ -126,15 +161,20 @@ wss.on("connection", (ws: WebSocket) => {
           });
         }
       }
+
       if (parsedData.type === "gameStart") {
-        const room = parsedData.roomId;
-        if (rooms.has(room)) {
-          rooms.get(room)!["players"].forEach((player: any) => {
+        const roomId = parsedData.roomId;
+        const roomExists = await redisClient.exists(roomId);
+
+        if (roomExists === 1) {
+          const roomData = await redisClient.hGetAll(roomId);
+          const players = JSON.parse(roomData.players);
+          players.forEach((player: any) => {
             if (player.ws.readyState === WebSocket.OPEN) {
               player.ws.send(
                 JSON.stringify({
                   type: "gameStart",
-                  text: rooms.get(room)!["text"],
+                  text: roomData.text,
                 })
               );
             }
@@ -145,7 +185,10 @@ wss.on("connection", (ws: WebSocket) => {
       console.error("Error processing message:", err);
     }
   });
+
   ws.on("close", () => {
+    console.log("Client disconnected");
+
     rooms.forEach((roomData, roomId) => {
       const players = roomData.players;
       players.forEach((player: any) => {
@@ -154,25 +197,25 @@ wss.on("connection", (ws: WebSocket) => {
           players.forEach((remainingPlayer: any) => {
             if (remainingPlayer.ws.readyState === WebSocket.OPEN) {
               remainingPlayer.ws.send(
-                  JSON.stringify({
-                    type: "playerLeft",
-                    message: `${player.name} has left the room`,
-                    playerName: player.name,
-                  })
-                );
-              }
-            });
+                JSON.stringify({
+                  type: "playerLeft",
+                  message: `${player.name} has left the room`,
+                  playerName: player.name,
+                })
+              );
+            }
+          });
           if (players.size === 0) {
             rooms.delete(roomId);
           }
         }
       });
     });
-
-    console.log("Client disconnected");
   });
+
   ws.on("error", (err) => {
     console.error("WebSocket error:", err);
   });
+
   ws.send("Hello");
 });
