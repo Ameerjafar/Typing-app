@@ -4,8 +4,6 @@ import Card from "../ui/Card";
 import TestCard from "../ui/TestCard";
 import { Trophy, Clock, Target, Medal } from "lucide-react";
 import RankingCard from "../ui/RankingCard";
-import { timeAtom } from "../store/TimeAtom";
-import { useRecoilValue } from "recoil";
 import { useNavigate } from "react-router-dom";
 
 interface UserObject {
@@ -21,7 +19,7 @@ const UserProfile = () => {
   const [average, setAverage] = useState<number[]>([]);
   const [ranking, setRanking] = useState<number[]>([]);
   const [wpm, setWpm] = useState<number[]>([]);
-  const time = useRecoilValue(timeAtom);
+  // const time = useRecoilValue(timeAtom);
   const navigate = useNavigate()
   useEffect(() => {
     const fetchUser = async () => {
@@ -106,15 +104,15 @@ const UserProfile = () => {
           <div className="flex space-x-7">
             <RankingCard
               second={15}
-              ranking={`${ranking[0] !== null ? ranking[0] : "0"}`}
-              BestUserScore={`${wpm[0] !== null ? wpm[0] : "0"}`}
+              ranking={`${ranking[0]}`}
+              BestUserScore={`${wpm[0] !== null ? wpm[0] : 0}`}
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
             ></RankingCard>
             <RankingCard
               second={60}
-              ranking={`${ranking[1] !== null ? ranking[1] : "0"}`}
-              BestUserScore={`${wpm[1] !== null ? wpm[1] : "0"}`}
+              ranking={`${ranking[1]}`}
+              BestUserScore={`${wpm[1] !== null ? wpm[1] : 0}`}
               icon2={<Trophy className="text-yellow-400" />}
               icon1={<Medal className="text-blue-600" />}
             ></RankingCard>
