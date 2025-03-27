@@ -3,7 +3,6 @@ import LandingPage from "./pages/LandingPage"
 import { RecoilRoot } from "recoil"
 import Result from "./component/Result"
 import UserProfile from "./component/UserProfile"
-import WebSocketServer from "./ws/WebSocket"
 import SignIn from "./component/SignIn"
 import SignUp from "./component/SignUp"
 function App() {
@@ -19,7 +18,7 @@ function App() {
             <Route path = '/result' element = { <Result />}></Route>
             {/* <Route path = '/word' element = { <Word />}></Route> */}
             {token && <Route path = '/profile' element = { <UserProfile />}></Route>}
-            <Route path='/multiplayer' element = { <WebSocketServer />}></Route>
+            {/* <Route path='/multiplayer' element = { <WebSocketServer />}></Route> */}
           </Routes>
         </BrowserRouter>
       </div>

@@ -10,6 +10,6 @@ route.use('/', landingRoute);
 route.use('/auth', authRouter);
 route.use('/user', userRouter)
 route.use('/leaderboard', leaderBoardRouter);
-route.use('/rooms', roomRoute);
+// route.use('/rooms', roomRoute);
 
 export default route;

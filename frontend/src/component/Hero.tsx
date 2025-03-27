@@ -4,26 +4,24 @@ import Footer from "./Footer";
 import CounterComponent from "./CounterComponent";
 import Header from "./Header";
 import TimerComponent from "./TimerComponent";
-import { isMultiPlayer } from "../store/textAtom";
-import { useRecoilValue } from 'recoil';
 const Hero = () => {
-  const multiplayer = useRecoilValue(isMultiPlayer);
+  const multiplayer = localStorage.getItem("isMultiPlayer")
   return (
-    <div className = 'relative'>
-      <div className = 'pb-20'>
+    <div className='relative'>
+      <div className='pb-20'>
         <Header />
       </div>
-      <div className = ''>
-        <TimerComponent />
+      <div className=''>
+        {multiplayer !== "true" && <TimerComponent />}
       </div>
-        <div className = 'text-4xl mt-6'><CounterComponent /></div>
+      <div className='text-4xl mt-6'><CounterComponent /></div>
       {/* <div><TimerComponent /></div> */}
       <div
         className="relative  text-[#333333] text-xl md:text-4xl font-mono overflow-hidden">
         <Test />
       </div>
       <div className="flex justify-center mt-2">
-        {!multiplayer && <Reset /> }
+        {multiplayer !== "true" && <Reset />}
       </div>
       <Footer />
     </div>
