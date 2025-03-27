@@ -17,13 +17,27 @@ const Test = () => {
   const [currentWordInd, setCurrentWordIndex] =
     useRecoilState<number>(currentWordIndex);
   const setParagraphActive = useSetRecoilState(paragraphActive);
+  const multiplayer =  localStorage.getItem("isMultiPlayer");
+  // if(multiplayer === "true") {
+  //   const fetchText = async () => {
+  //     try {
+  //       const roomId = localStorage.getItem("roomId");
+  //       const response = await axios.get(`${import.meta.env.VITE_API_PATH}/rooms/get-text/${roomId}`)
+  //       console.log(response.data.text);
+  //       setText(response.data.text);
+  //     }catch(error) {
+  //       console.log("This is the error I got", error);
+  //     }
+  //   }
+  //   fetchText();
+  // }
   const emptySpans = () => {
     return Array(words.length)
       .fill(0)
       .map(() => createRef<HTMLSpanElement>());
   };
   const [wordRef, setWordRef] = useState(emptySpans);
-  const keyHandler = (event) => {
+  const keyHandler = (event: any) => {
     setParagraphActive(true);
     const { key } = event;
     console.log(key);

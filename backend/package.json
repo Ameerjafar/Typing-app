@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/index.ts",
+    "dev-ws": "nodemon src/ws/webSocketServer.ts"
   },
   "author": "",
   "license": "ISC",
@@ -25,5 +27,9 @@
     "redis": "^4.7.0",
     "socket.io": "^4.8.1",
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2"
   }
 }
