@@ -11,9 +11,9 @@ const Hero = () => {
       <div className='pb-20'>
         <Header />
       </div>
-      <div className=''>
+      {/* <div className=''>
         {multiplayer !== "true" && <TimerComponent />}
-      </div>
+      </div> */}
       <div className='text-4xl mt-6'><CounterComponent /></div>
       <div className = 'flex justify-center'><TimerComponent /></div>
       <div
