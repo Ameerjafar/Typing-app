@@ -1,7 +1,7 @@
 interface RankingCardProps {
     second: number,
     ranking: string,
-    BestUserScore: number,
+    BestUserScore: string,
     icon1: React.ReactNode,
     icon2: React.ReactNode
 }
