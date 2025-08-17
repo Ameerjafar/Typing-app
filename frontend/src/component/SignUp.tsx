@@ -19,6 +19,7 @@ function SignUp() {
         password
     })
     if(clientSideChecking) {
+      
         await axios.post(`${import.meta.env.VITE_API_PATH}/auth/signup`, {
             fullName,
             email,

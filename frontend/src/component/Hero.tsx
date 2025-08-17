@@ -15,13 +15,13 @@ const Hero = () => {
         {multiplayer !== "true" && <TimerComponent />}
       </div>
       <div className='text-4xl mt-6'><CounterComponent /></div>
-      {/* <div><TimerComponent /></div> */}
+      <div className = 'flex justify-center'><TimerComponent /></div>
       <div
         className="relative  text-[#333333] text-xl md:text-4xl font-mono overflow-hidden">
         <Test />
       </div>
       <div className="flex justify-center mt-2">
-        {multiplayer !== "true" && <Reset />}
+        <Reset />
       </div>
       <Footer />
     </div>
