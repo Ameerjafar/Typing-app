@@ -1,1 +1,1 @@
-# monkeytype-clone
+# typing-app
