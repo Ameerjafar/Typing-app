@@ -1,67 +1,108 @@
-import { RedisClientType, createClient } from "@redis/client";
 import { WebSocket } from "ws"
-import dotenv from 'dotenv';
 
-dotenv.config();
+interface User {
+    userId: string;
+    userName: string;
+    ws: WebSocket;
+    progress: number;
+    wpm?: number;
+    accuracy?: number;
+    finished?: boolean;
+}
 
-interface RoomIdObject {
-    admin?: string | undefined
-    userId: string[],
-    ws: WebSocket[],
-    userName: string[],
+interface Room {
+    roomId: string;
+    admin: string;
+    users: User[];
+    startTime?: number;
 }
 
 class UserManager {
-    private redisClient: RedisClientType;
+    private rooms: Map<string, Room>;
+
     constructor() {
-        this.redisClient = createClient({
-            url: process.env.REDIS_URL
-        });
-        this.initialize();
+        this.rooms = new Map<string, Room>();
     }
-    initialize() {
-        this.redisClient.on('error', (err) => {
-            console.log(err);
-            return;
-        })
-        this.redisClient.connect();
-    }
+
     async addUser(roomId: string, userId: string, ws: WebSocket, userName: string, admin: string) {
-        const existingData = await this.getRoomData(roomId);
-        const newData = {
-            userId: [...(existingData?.userId || []), userId],
-            ws: [...(existingData?.ws || []), ws],
-            userName: [...(existingData?.userName || []), userName],
-            admin: existingData?.admin ? existingData.admin : admin
-        };
-        console.log(this.redisClient);
-        await this.redisClient.set(roomId, JSON.stringify(newData));
+        let room = this.rooms.get(roomId);
+        
+        if (!room) {
+            room = {
+                roomId,
+                admin,
+                users: []
+            };
+            this.rooms.set(roomId, room);
+        }
+
+        // Check if user already exists in the room to avoid duplicates (though connection handling should prevent this)
+        const existingUserIndex = room.users.findIndex(u => u.userId === userId);
+        if (existingUserIndex !== -1) {
+            room.users[existingUserIndex].ws = ws; // Update WS connection if reconnecting
+            room.users[existingUserIndex].userName = userName;
+        } else {
+            room.users.push({
+                userId,
+                userName,
+                ws,
+                progress: 0,
+                finished: false
+            });
+        }
     }
-    async removeUser(roomId: string, userId: string, ws: WebSocket): Promise<boolean> {
-        const room = await this.getRoomData(roomId);
+
+    async removeUser(roomId: string, userId: string): Promise<boolean> {
+        const room = this.rooms.get(roomId);
         if (!room) return false;
 
-        const findUserId: number = room.userId.indexOf(userId);
-        if (findUserId === -1) return false;
+        const userIndex = room.users.findIndex(u => u.userId === userId);
+        if (userIndex === -1) return false;
 
-        room.userId.splice(findUserId, 1);
-        room.ws.splice(findUserId, 1);
-        room.userName.splice(findUserId, 1);
-        await this.redisClient.set(roomId, JSON.stringify(room));
+        room.users.splice(userIndex, 1);
+
+        // If room is empty, delete it
+        if (room.users.length === 0) {
+            this.rooms.delete(roomId);
+        } else if (room.admin === userId) {
+            // Reassign admin if admin leaves
+            room.admin = room.users[0].userId;
+        }
+
         return true;
     }
-    async getAllUsers(roomId: string) {
-        const room = await this.getRoomData(roomId);
-        return { ws: room?.ws } ;
+
+    async getAllUsers(roomId: string): Promise<User[] | null> {
+        const room = this.rooms.get(roomId);
+        return room ? room.users : null;
     }
-    async getRoom(roomId: string) {
-        const exists = await this.redisClient.exists(roomId);
-        return exists === 1;
+
+    async getRoom(roomId: string): Promise<boolean> {
+        return this.rooms.has(roomId);
     }
-    async getRoomData(roomId: string) {
-        const response = await this.redisClient.get(roomId);
-        console.log(response);
-        return response ? JSON.parse(response) : null;
+    
+    async updateProgress(roomId: string, userId: string, progress: number): Promise<boolean> {
+        const room = this.rooms.get(roomId);
+        if (!room) return false;
+
+        const user = room.users.find(u => u.userId === userId);
+        if (!user) return false;
+
+        user.progress = progress;
+        return true;
+    }
+
+    async updateStats(roomId: string, userId: string, wpm: number, accuracy: number): Promise<boolean> {
+        const room = this.rooms.get(roomId);
+        if (!room) return false;
+
+        const user = room.users.find(u => u.userId === userId);
+        if (!user) return false;
+
+        user.wpm = wpm;
+        user.accuracy = accuracy;
+        user.finished = true;
+        return true;
     }
 }
 

@@ -14,14 +14,15 @@ wss.on('connection', function connection(ws: WebSocket) {
   ws.on('error', console.error);
 
   ws.on('message', async function message(data: string) {
+
     const parseData = JSON.parse(data);
-    console.log(parseData);
+    console.log("Received message:", parseData.type);
+    
     try {
       if (parseData.type === 'createRoom') {
-        
         if (await userManager.getRoom(parseData.roomId)) {
           ws.send(JSON.stringify({
-            error: "This Room has already exist"
+            error: "This Room already exists"
           }));
           return;
         }
@@ -42,24 +43,28 @@ wss.on('connection', function connection(ws: WebSocket) {
         }
 
         await userManager.addUser(parseData.roomId, parseData.userId, ws, parseData.userName, "");
-        const users: any = await userManager.getAllUsers(roomId);
-        console.log("This is the webSocket connection", users.ws);
-          users.ws.forEach((ws: WebSocket) => {
-            if (ws.readyState === WebSocket.OPEN) {
-              ws.send(JSON.stringify({
-                type: 'joinedRoom',
-                roomId: roomId,
-                userId: parseData.userId,
-                userName: parseData.userName,
-                message: `${parseData.userName} has joined the room`
-              }));
-            }
-          });
+        const users = await userManager.getAllUsers(roomId);
+        
+        if (users) {
+            // Notify existing users about the new user
+            users.forEach((user) => {
+                if (user.ws.readyState === WebSocket.OPEN) {
+                    user.ws.send(JSON.stringify({
+                        type: 'joinedRoom',
+                        roomId: roomId,
+                        userId: parseData.userId,
+                        userName: parseData.userName,
+                        message: `${parseData.userName} has joined the room`,
+                        users: users.map(u => ({ userId: u.userId, userName: u.userName, progress: u.progress })) // Send current user list
+                    }));
+                }
+            });
         }
+      }
 
       if (parseData.type === 'leftRoom') {
         const roomId = parseData.roomId;
-        const response = await userManager.removeUser(roomId, parseData.userId, ws);
+        const response = await userManager.removeUser(roomId, parseData.userId);
 
         if (!response) {
           ws.send(JSON.stringify({
@@ -67,11 +72,11 @@ wss.on('connection', function connection(ws: WebSocket) {
             message: "you are not removed from the room please try again"
           }));
         } else {
-          const getAllUsers = await userManager.getAllUsers(roomId);
-          if (getAllUsers && getAllUsers.ws) {
-            getAllUsers.ws.forEach((ws: WebSocket) => {
-              if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify({
+          const users = await userManager.getAllUsers(roomId);
+          if (users) {
+            users.forEach((user) => {
+              if (user.ws.readyState === WebSocket.OPEN) {
+                user.ws.send(JSON.stringify({
                   type: 'leftRoomSuccess',
                   roomId: roomId,
                   userId: parseData.userId,
@@ -87,11 +92,83 @@ wss.on('connection', function connection(ws: WebSocket) {
           }));
         }
       }
+
+      if (parseData.type === 'updateProgress') {
+        const { roomId, userId, progress } = parseData;
+        const updated = await userManager.updateProgress(roomId, userId, progress);
+        
+        if (updated) {
+            const users = await userManager.getAllUsers(roomId);
+            if (users) {
+                users.forEach((user) => {
+                    if (user.ws.readyState === WebSocket.OPEN) {
+                        user.ws.send(JSON.stringify({
+                            type: 'progressUpdate',
+                            userId: userId,
+                            progress: progress
+                        }));
+                    }
+                });
+            }
+        }
+      }
+
+      if (parseData.type === 'startGame') {
+        const { roomId, text } = parseData;
+        const users = await userManager.getAllUsers(roomId);
+        if (users) {
+            users.forEach((user) => {
+                if (user.ws.readyState === WebSocket.OPEN) {
+                    user.ws.send(JSON.stringify({
+                        type: 'gameStarted',
+                        text: text
+                    }));
+                }
+            });
+        }
+      }
+
+      if (parseData.type === 'gameFinished') {
+        const { roomId, userId, wpm, accuracy } = parseData;
+        const updated = await userManager.updateStats(roomId, userId, wpm, accuracy);
+
+        if (updated) {
+            const users = await userManager.getAllUsers(roomId);
+            if (users) {
+                // Check if all users have finished
+                const allFinished = users.every(u => u.finished);
+
+                if (allFinished) {
+                    // Calculate winner
+                    const sortedUsers = [...users].sort((a, b) => {
+                        if (b.wpm !== a.wpm) {
+                            return (b.wpm || 0) - (a.wpm || 0);
+                        }
+                        return (b.accuracy || 0) - (a.accuracy || 0);
+                    });
+
+                    users.forEach((user) => {
+                        if (user.ws.readyState === WebSocket.OPEN) {
+                            user.ws.send(JSON.stringify({
+                                type: 'gameEnded',
+                                leaderboard: sortedUsers.map(u => ({
+                                    userId: u.userId,
+                                    userName: u.userName,
+                                    wpm: u.wpm,
+                                    accuracy: u.accuracy
+                                }))
+                            }));
+                        }
+                    });
+                }
+            }
+        }
+      }
+
     } catch (error) {
       console.log(error);
     }
   });
 
-
-  ws.send('Hello! Message From Server!!');
+  ws.send(JSON.stringify({ type: 'connected', message: 'Hello! Message From Server!!' }));
 });
